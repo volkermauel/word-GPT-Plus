@@ -48,7 +48,8 @@ export const availableAPIs: IStringKeyMap = {
   azure: 'azure',
   gemini: 'gemini',
   ollama: 'ollama',
-  groq: 'groq'
+  groq: 'groq',
+  openweb: 'openweb'
 }
 
 // official API 可用的模型
@@ -104,6 +105,8 @@ export const availableModelsForOllama: IStringKeyMap = {
   'orca-mini': 'orca-mini',
   vicuna: 'vicuna'
 }
+
+export const availableModelsForOpenweb: IStringKeyMap = {}
 
 export const availableModelsForGroq: IStringKeyMap = {
   'gemma2-9b-it': 'gemma2-9b-it',

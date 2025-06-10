@@ -29,6 +29,12 @@ export enum localStorageKey {
   ollamaModel = 'ollamaModel',
   ollamaTemperature = 'ollamaTemperature',
   ollamaCustomModel = 'ollamaCustomModel',
+  // openweb api
+  openwebEndpoint = 'openwebEndpoint',
+  openwebModel = 'openwebModel',
+  openwebTemperature = 'openwebTemperature',
+  openwebCustomModel = 'openwebCustomModel',
+  openwebCollections = 'openwebCollections',
   // groq api
   groqAPIKey = 'groqAPIKey',
   groqTemperature = 'groqTemperature',

@@ -4,6 +4,7 @@ import {
   availableModelsForGemini,
   availableModelsForGroq,
   availableModelsForOllama,
+  availableModelsForOpenweb,
   languageMap
 } from './constant'
 
@@ -25,6 +26,8 @@ export function checkAuth(auth: Auth): boolean {
     case 'groq':
       return !!auth.groqAPIKey
     case 'ollama':
+      return true
+    case 'openweb':
       return true
     default:
       return false
@@ -63,7 +66,8 @@ export const optionLists = {
   officialModelList: getOptionList(availableModels),
   geminiModelList: getOptionList(availableModelsForGemini),
   ollamaModelList: getOptionList(availableModelsForOllama),
-  groqModelList: getOptionList(availableModelsForGroq)
+  groqModelList: getOptionList(availableModelsForGroq),
+  openwebModelList: getOptionList(availableModelsForOpenweb)
 }
 
 export const getLabel = (key: string) => `${key}Label`

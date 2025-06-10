@@ -371,6 +371,10 @@ const ollamaModelOptions = ref<{ label: string; value: string }[]>(
   settingPreset.ollamaModelSelect.optionList
 )
 
+const openwebModelOptions = ref<{ label: string; value: string }[]>(
+  settingPreset.openwebModelSelect.optionList
+)
+
 async function loadOllamaModels() {
   if (!settingForm.value.ollamaEndpoint) return
   const models = await API.ollama.listModels(settingForm.value.ollamaEndpoint)
@@ -378,6 +382,16 @@ async function loadOllamaModels() {
   if (options.length > 0) {
     settingPreset.ollamaModelSelect.optionList = options
     ollamaModelOptions.value = options
+  }
+}
+
+async function loadOpenwebModels() {
+  if (!settingForm.value.openwebEndpoint) return
+  const models = await API.openweb.listModels(settingForm.value.openwebEndpoint)
+  const options = models.map(item => ({ label: item, value: item }))
+  if (options.length > 0) {
+    settingPreset.openwebModelSelect.optionList = options
+    openwebModelOptions.value = options
   }
 }
 
@@ -428,6 +442,8 @@ const currentModelOptions = computed(() => {
       return settingPreset.geminiModelSelect.optionList
     case 'ollama':
       return ollamaModelOptions.value
+    case 'openweb':
+      return openwebModelOptions.value
     case 'groq':
       return settingPreset.groqModelSelect.optionList
     case 'azure':
@@ -445,6 +461,8 @@ const currentModelPlaceholder = computed(() => {
       return t('geminiModelSelectPlaceholder')
     case 'ollama':
       return t('ollamaModelSelectPlaceholder')
+    case 'openweb':
+      return t('openwebModelSelectPlaceholder')
     case 'groq':
       return t('groqModelSelectPlaceholder')
     case 'azure':
@@ -463,6 +481,8 @@ const currentModelSelect = computed({
         return settingForm.value.geminiModelSelect
       case 'ollama':
         return settingForm.value.ollamaModelSelect
+      case 'openweb':
+        return settingForm.value.openwebModelSelect
       case 'groq':
         return settingForm.value.groqModelSelect
       case 'azure':
@@ -481,6 +501,9 @@ const currentModelSelect = computed({
         break
       case 'ollama':
         settingForm.value.ollamaModelSelect = value
+        break
+      case 'openweb':
+        settingForm.value.openwebModelSelect = value
         break
       case 'groq':
         settingForm.value.groqModelSelect = value
@@ -572,10 +595,21 @@ const addWatch = () => {
   )
 
   watch(
+    () => settingForm.value.openwebEndpoint,
+    () => {
+      if (settingForm.value.api === 'openweb') {
+        loadOpenwebModels()
+      }
+    }
+  )
+
+  watch(
     () => settingForm.value.api,
     val => {
       if (val === 'ollama') {
         loadOllamaModels()
+      } else if (val === 'openweb') {
+        loadOpenwebModels()
       }
     }
   )
@@ -850,6 +884,30 @@ async function continueChat() {
           loading,
           temperature: settingForm.value.ollamaTemperature
         })
+        break
+      case 'openweb':
+        historyDialog.value.push({
+          role: 'user',
+          content: 'continue'
+        })
+        await API.openweb.createChatCompletionStream({
+          openwebEndpoint: settingForm.value.openwebEndpoint,
+          openwebModel:
+            settingForm.value.openwebCustomModel ||
+            settingForm.value.openwebModelSelect,
+          collections:
+            settingForm.value.openwebCollections
+              .split(',')
+              .map(s => s.trim())
+              .filter(Boolean),
+          messages: historyDialog.value,
+          result,
+          historyDialog,
+          errorIssue,
+          loading,
+          temperature: settingForm.value.openwebTemperature
+        })
+        break
     }
   } catch (error) {
     result.value = String(error)
@@ -867,6 +925,7 @@ async function continueChat() {
 onBeforeMount(() => {
   addWatch()
   loadOllamaModels()
+  loadOpenwebModels()
   initData()
 })
 </script>
