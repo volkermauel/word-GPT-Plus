@@ -1,4 +1,5 @@
 const assert = require('node:assert/strict')
+const { test } = require('node:test')
 const { createChatCompletion } = require('../src/api/ollama')
 
 test('ollama returns reasoning and text', async () => {
