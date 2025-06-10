@@ -55,4 +55,33 @@ async function listModels(ollamaEndpoint: string): Promise<string[]> {
   }
 }
 
-export default { createChatCompletionStream, listModels }
+interface ChatCompletionOptions {
+  ollamaEndpoint: string
+  ollamaModel: string
+  messages: { role: string; content: string }[]
+  temperature: number
+}
+
+async function createChatCompletion(
+  options: ChatCompletionOptions
+): Promise<string> {
+  const formatedEndpoint = options.ollamaEndpoint.replace(/\/$/, '')
+  const response = await axios.post(
+    `${formatedEndpoint}/api/chat`,
+    {
+      model: options.ollamaModel,
+      options: { temperature: options.temperature },
+      stream: false,
+      messages: options.messages
+    },
+    { headers: { 'Content-Type': 'application/json' } }
+  )
+
+  if (response.status !== 200) {
+    throw new Error(`Status code: ${response.status}`)
+  }
+
+  return response.data?.message?.content?.replace(/\\n/g, '\n') ?? ''
+}
+
+export default { createChatCompletionStream, createChatCompletion, listModels }
