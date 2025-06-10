@@ -189,17 +189,32 @@
 </template>
 
 <script lang="ts" setup>
-import { onBeforeMount, watch } from 'vue'
+import { onBeforeMount, watch, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { Setting, ArrowLeft, Tools } from '@element-plus/icons-vue'
 
 import { getLabel, getPlaceholder } from '@/utils/common'
 import { availableAPIs } from '@/utils/constant'
+import API from '@/api'
 import { SettingNames, settingPreset } from '@/utils/settingPreset'
 import useSettingForm from '@/utils/settingForm'
 
 const router = useRouter()
 const { settingForm, settingFormKeys } = useSettingForm()
+
+const ollamaModelOptions = ref<{ label: string; value: string }[]>(
+  settingPreset.ollamaModelSelect.optionList
+)
+
+async function loadOllamaModels() {
+  if (!settingForm.value.ollamaEndpoint) return
+  const models = await API.ollama.listModels(settingForm.value.ollamaEndpoint)
+  const options = models.map(item => ({ label: item, value: item }))
+  if (options.length > 0) {
+    settingPreset.ollamaModelSelect.optionList = options
+    ollamaModelOptions.value = options
+  }
+}
 
 const getApiInputSettings = (platform: string) => {
   return Object.keys(settingForm.value).filter(
@@ -241,10 +256,29 @@ const addWatch = () => {
       }
     )
   })
+
+  watch(
+    () => settingForm.value.ollamaEndpoint,
+    () => {
+      if (settingForm.value.api === 'ollama') {
+        loadOllamaModels()
+      }
+    }
+  )
+
+  watch(
+    () => settingForm.value.api,
+    val => {
+      if (val === 'ollama') {
+        loadOllamaModels()
+      }
+    }
+  )
 }
 
 onBeforeMount(() => {
   addWatch()
+  loadOllamaModels()
 })
 
 function backToHome() {
