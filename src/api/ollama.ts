@@ -39,4 +39,20 @@ async function createChatCompletionStream(
   }
 }
 
-export default { createChatCompletionStream }
+async function listModels(ollamaEndpoint: string): Promise<string[]> {
+  try {
+    const formatedEndpoint = ollamaEndpoint.replace(/\/$/, '')
+    const response = await axios.get(`${formatedEndpoint}/api/tags`)
+    if (response.status !== 200) {
+      throw new Error(`Status code: ${response.status}`)
+    }
+    return (
+      response.data?.models?.map((item: { name: string }) => item.name) || []
+    )
+  } catch (error) {
+    console.error(error)
+    return []
+  }
+}
+
+export default { createChatCompletionStream, listModels }

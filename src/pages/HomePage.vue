@@ -366,6 +366,21 @@ const { t } = useI18n()
 
 const { settingForm } = useSettingForm()
 
+// dynamic ollama model list
+const ollamaModelOptions = ref<{ label: string; value: string }[]>(
+  settingPreset.ollamaModelSelect.optionList
+)
+
+async function loadOllamaModels() {
+  if (!settingForm.value.ollamaEndpoint) return
+  const models = await API.ollama.listModels(settingForm.value.ollamaEndpoint)
+  const options = models.map(item => ({ label: item, value: item }))
+  if (options.length > 0) {
+    settingPreset.ollamaModelSelect.optionList = options
+    ollamaModelOptions.value = options
+  }
+}
+
 // system prompt
 const systemPrompt = ref('')
 const systemPromptSelected = ref('')
@@ -412,7 +427,7 @@ const currentModelOptions = computed(() => {
     case 'gemini':
       return settingPreset.geminiModelSelect.optionList
     case 'ollama':
-      return settingPreset.ollamaModelSelect.optionList
+      return ollamaModelOptions.value
     case 'groq':
       return settingPreset.groqModelSelect.optionList
     case 'azure':
@@ -544,6 +559,24 @@ const addWatch = () => {
     () => settingForm.value.replyLanguage,
     () => {
       localStorage.setItem('replyLanguage', settingForm.value.replyLanguage)
+    }
+  )
+
+  watch(
+    () => settingForm.value.ollamaEndpoint,
+    () => {
+      if (settingForm.value.api === 'ollama') {
+        loadOllamaModels()
+      }
+    }
+  )
+
+  watch(
+    () => settingForm.value.api,
+    val => {
+      if (val === 'ollama') {
+        loadOllamaModels()
+      }
     }
   )
 }
@@ -924,6 +957,7 @@ async function continueChat() {
 
 onBeforeMount(() => {
   addWatch()
+  loadOllamaModels()
   initData()
 })
 </script>
