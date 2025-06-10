@@ -205,6 +205,10 @@ const { settingForm, settingFormKeys } = useSettingForm()
 const ollamaModelOptions = ref<{ label: string; value: string }[]>(
   settingPreset.ollamaModelSelect.optionList
 )
+const openwebModelOptions = ref<{ label: string; value: string }[]>(
+  settingPreset.openwebModelSelect.optionList
+)
+const openwebCollectionOptions = ref<{ label: string; value: string }[]>([])
 
 async function loadOllamaModels() {
   if (!settingForm.value.ollamaEndpoint) return
@@ -214,6 +218,29 @@ async function loadOllamaModels() {
     settingPreset.ollamaModelSelect.optionList = options
     ollamaModelOptions.value = options
   }
+}
+
+async function loadOpenwebModels() {
+  if (!settingForm.value.openwebEndpoint) return
+  const models = await API.openweb.listModels(
+    settingForm.value.openwebEndpoint,
+    settingForm.value.openwebAPIKey
+  )
+  const options = models.map(item => ({ label: item, value: item }))
+  if (options.length > 0) {
+    settingPreset.openwebModelSelect.optionList = options
+    openwebModelOptions.value = options
+  }
+}
+
+async function loadOpenwebCollections() {
+  if (!settingForm.value.openwebEndpoint) return
+  const cols = await API.openweb.listCollections(
+    settingForm.value.openwebEndpoint,
+    settingForm.value.openwebAPIKey
+  )
+  openwebCollectionOptions.value = cols.map(item => ({ label: item, value: item }))
+  settingPreset.openwebCollection.optionList = openwebCollectionOptions.value
 }
 
 const getApiInputSettings = (platform: string) => {
@@ -267,10 +294,23 @@ const addWatch = () => {
   )
 
   watch(
+    () => settingForm.value.openwebEndpoint,
+    () => {
+      if (settingForm.value.api === 'openweb') {
+        loadOpenwebModels()
+        loadOpenwebCollections()
+      }
+    }
+  )
+
+  watch(
     () => settingForm.value.api,
     val => {
       if (val === 'ollama') {
         loadOllamaModels()
+      } else if (val === 'openweb') {
+        loadOpenwebModels()
+        loadOpenwebCollections()
       }
     }
   )
@@ -279,6 +319,8 @@ const addWatch = () => {
 onBeforeMount(() => {
   addWatch()
   loadOllamaModels()
+  loadOpenwebModels()
+  loadOpenwebCollections()
 })
 
 function backToHome() {

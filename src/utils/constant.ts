@@ -48,7 +48,8 @@ export const availableAPIs: IStringKeyMap = {
   azure: 'azure',
   gemini: 'gemini',
   ollama: 'ollama',
-  groq: 'groq'
+  groq: 'groq',
+  openweb: 'openweb'
 }
 
 // official API 可用的模型
@@ -114,6 +115,9 @@ export const availableModelsForGroq: IStringKeyMap = {
   'whisper-large-v3': 'whisper-large-v3',
   'deepseek-r1-distill-llama-70b': 'deepseek-r1-distill-llama-70b'
 }
+
+// OpenWeb API models reuse OpenAI models by default
+export const availableModelsForOpenweb: IStringKeyMap = availableModels
 
 export const buildInPrompt = {
   translate: {

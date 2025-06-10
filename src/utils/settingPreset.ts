@@ -50,6 +50,12 @@ export type SettingNames =
   | 'groqMaxTokens'
   | 'groqModelSelect'
   | 'groqCustomModel'
+  | 'openwebEndpoint'
+  | 'openwebAPIKey'
+  | 'openwebCustomModel'
+  | 'openwebModelSelect'
+  | 'openwebTemperature'
+  | 'openwebCollection'
 
 // Helper functions
 const createStorageFuncs = (key: string, defaultValue: any) => ({
@@ -166,5 +172,20 @@ export const settingPreset: Record<SettingNames, ISettingOption> = {
     optionLists.groqModelList,
     availableModelsForGroq
   ),
-  groqCustomModel: defaultInputSetting
+  groqCustomModel: defaultInputSetting,
+  openwebEndpoint: defaultInputSetting,
+  openwebAPIKey: defaultInputSetting,
+  openwebCustomModel: defaultInputSetting,
+  openwebModelSelect: selectSetting(
+    availableModelsForOpenweb['gpt-3.5'],
+    'openwebModel',
+    optionLists.openwebModelList,
+    availableModelsForOpenweb
+  ),
+  openwebTemperature: inputNumSetting(0.7, 'openwebTemperature', 'temperature'),
+  openwebCollection: {
+    ...inputSetting(''),
+    type: 'select',
+    optionList: optionLists.openwebCollectionList
+  }
 }

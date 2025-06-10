@@ -35,6 +35,13 @@ export enum localStorageKey {
   groqMaxTokens = 'groqMaxTokens',
   groqModel = 'groqModel',
   groqCustomModel = 'groqCustomModel',
+  // openweb api
+  openwebEndpoint = 'openwebEndpoint',
+  openwebAPIKey = 'openwebAPIKey',
+  openwebModel = 'openwebModel',
+  openwebTemperature = 'openwebTemperature',
+  openwebCustomModel = 'openwebCustomModel',
+  openwebCollection = 'openwebCollection',
   // proxy
   enableProxy = 'enableProxy',
   proxy = 'proxy',
