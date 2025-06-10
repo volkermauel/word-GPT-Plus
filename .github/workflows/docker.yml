@@ -1,6 +1,6 @@
 name: Build and Push Docker Image
 
-on:
+"on":
   push:
     tags:
       - '*'
@@ -16,7 +16,8 @@ jobs:
       - name: Set lowercase repository name
         id: repo
         run: |
-          echo "repo=$(echo \"$GITHUB_REPOSITORY\" | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
+          repo=$(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')
+          echo "repo=$repo" >> "$GITHUB_OUTPUT"
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
