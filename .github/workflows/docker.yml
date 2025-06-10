@@ -10,8 +10,13 @@ jobs:
   build-and-push:
     runs-on: ubuntu-latest
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Set lowercase repository name
+        id: repo
+        run: |
+          echo "repo=$(echo \"$GITHUB_REPOSITORY\" | tr '[:upper:]' '[:lower:]')" >> "$GITHUB_OUTPUT"
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
@@ -29,7 +34,7 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        tags: ghcr.io/${{ github.repository }}:latest
+        tags: ghcr.io/${{ steps.repo.outputs.repo }}:latest
         platforms: linux/amd64,linux/arm64
 
     - name: Build and Push Docker Image with Tag
@@ -39,5 +44,5 @@ jobs:
         context: .
         file: ./Dockerfile
         push: true
-        tags: ghcr.io/${{ github.repository }}:${{ github.ref_name }}
+        tags: ghcr.io/${{ steps.repo.outputs.repo }}:${{ github.ref_name }}
         platforms: linux/amd64,linux/arm64
