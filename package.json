@@ -10,7 +10,8 @@
     "lint:fix": "eslint --fix --ext .js,.jsx,.ts,.tsx,.vue src/",
     "cz": "git-cz",
     "release": "bump-version",
-    "lint:dpdm": "dpdm -T --tsconfig ./tsconfig.json --no-tree --no-warning --exit-code circular:1 src/main.ts"
+    "lint:dpdm": "dpdm -T --tsconfig ./tsconfig.json --no-tree --no-warning --exit-code circular:1 src/main.ts",
+    "test": "node --test"
   },
   "dependencies": {
     "@element-plus/icons-vue": "^2.3.1",

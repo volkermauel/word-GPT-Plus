@@ -606,190 +606,99 @@ function handleInsertTypeChange(val: insertTypes) {
 
 async function template(taskType: keyof typeof buildInPrompt | 'custom') {
   loading.value = true
-  let systemMessage
-  let userMessage = ''
-  const getSeletedText = async () => {
-    return Word.run(async context => {
-      const range = context.document.getSelection()
-      range.load('text')
-      await context.sync()
-      return range.text
-    })
+  await API.common.enableTrackChanges()
+
+  const info = await Word.run(async context => {
+    const range = context.document.getSelection()
+    const ps = range.paragraphs
+    ps.load(['text', 'font'])
+    await context.sync()
+    return ps.items.map(p => ({
+      text: p.text,
+      font: {
+        bold: p.font.bold,
+        color: p.font.color,
+        name: p.font.name,
+        size: p.font.size,
+        italic: p.font.italic,
+        underline: p.font.underline,
+        highlightColor: p.font.highlightColor
+      }
+    }))
+  })
+
+  if (
+    settingForm.value.api !== 'ollama' ||
+    !settingForm.value.ollamaEndpoint
+  ) {
+    ElMessage.error('Only Ollama API is supported for paragraph rewrite.')
+    loading.value = false
+    return
   }
-  const selectedText = await getSeletedText()
-  if (taskType === 'custom') {
-    if (systemPrompt.value.includes('{language}')) {
-      systemMessage = systemPrompt.value.replace(
-        '{language}',
+
+  const rewritten: { reason: string; text: string }[] = []
+  for (const p of info) {
+    let systemMessage
+    let userMessage = ''
+    const paragraphText = p.text
+
+    if (taskType === 'custom') {
+      if (systemPrompt.value.includes('{language}')) {
+        systemMessage = systemPrompt.value.replace(
+          '{language}',
+          settingForm.value.replyLanguage
+        )
+      } else {
+        systemMessage = systemPrompt.value
+      }
+      if (userMessage.includes('{text}')) {
+        userMessage = userMessage.replace('{text}', paragraphText)
+      } else {
+        userMessage = `Reply in ${settingForm.value.replyLanguage} ${prompt.value} ${paragraphText}`
+      }
+    } else {
+      systemMessage = buildInPrompt[taskType].system(
         settingForm.value.replyLanguage
       )
-    } else {
-      systemMessage = systemPrompt.value
+      userMessage = buildInPrompt[taskType].user(
+        paragraphText,
+        settingForm.value.replyLanguage
+      )
     }
-    if (userMessage.includes('{text}')) {
-      userMessage = userMessage.replace('{text}', selectedText)
-    } else {
-      userMessage = `Reply in ${settingForm.value.replyLanguage} ${prompt.value} ${selectedText}`
+
+    const instruction =
+      'Return a JSON object with keys "reason" and "text". "reason" briefly explains your changes. "text" is the rewritten paragraph.'
+    const messages = [
+      { role: 'system', content: systemMessage },
+      { role: 'user', content: userMessage + '\n' + instruction }
+    ]
+
+    try {
+      const response = await API.ollama.createChatCompletion({
+        ollamaEndpoint: settingForm.value.ollamaEndpoint,
+        ollamaModel:
+          settingForm.value.ollamaCustomModel ||
+          settingForm.value.ollamaModelSelect,
+        messages,
+        temperature: settingForm.value.ollamaTemperature
+      })
+      const parsed = JSON.parse(response)
+      rewritten.push({ reason: parsed.reason, text: parsed.text })
+    } catch (e) {
+      console.error(e)
+      errorIssue.value = true
+      loading.value = false
+      ElMessage.error('AI response error')
+      return
     }
-  } else {
-    systemMessage = buildInPrompt[taskType].system(
-      settingForm.value.replyLanguage
-    )
-    userMessage = buildInPrompt[taskType].user(
-      selectedText,
-      settingForm.value.replyLanguage
-    )
   }
-  if (
-    settingForm.value.api === 'official' &&
-    settingForm.value.officialAPIKey
-  ) {
-    const config = API.official.setConfig(
-      settingForm.value.officialAPIKey,
-      settingForm.value.officialBasePath
-    )
-    historyDialog.value = [
-      {
-        role: 'system',
-        content: systemMessage
-      },
-      {
-        role: 'user',
-        content: userMessage
-      }
-    ]
-    await API.official.createChatCompletionStream({
-      config,
-      messages: historyDialog.value,
-      result,
-      historyDialog,
-      errorIssue,
-      loading,
-      maxTokens: settingForm.value.officialMaxTokens,
-      temperature: settingForm.value.officialTemperature,
-      model:
-        settingForm.value.officialCustomModel ||
-        settingForm.value.officialModelSelect
-    })
-  } else if (settingForm.value.api === 'groq' && settingForm.value.groqAPIKey) {
-    historyDialog.value = [
-      {
-        role: 'system',
-        content: systemMessage
-      },
-      {
-        role: 'user',
-        content: userMessage
-      }
-    ]
-    await API.groq.createChatCompletionStream({
-      groqAPIKey: settingForm.value.groqAPIKey,
-      groqModel:
-        settingForm.value.groqCustomModel || settingForm.value.groqModelSelect,
-      messages: historyDialog.value,
-      result,
-      historyDialog,
-      errorIssue,
-      loading,
-      maxTokens: settingForm.value.officialMaxTokens,
-      temperature: settingForm.value.officialTemperature
-    })
-  } else if (
-    settingForm.value.api === 'azure' &&
-    settingForm.value.azureAPIKey
-  ) {
-    historyDialog.value = [
-      {
-        role: 'system',
-        content: systemMessage
-      },
-      {
-        role: 'user',
-        content: userMessage
-      }
-    ]
-    await API.azure.createChatCompletionStream({
-      azureAPIKey: settingForm.value.azureAPIKey,
-      azureAPIEndpoint: settingForm.value.azureAPIEndpoint,
-      azureDeploymentName: settingForm.value.azureDeploymentName,
-      azureAPIVersion: settingForm.value.azureAPIVersion,
-      messages: historyDialog.value,
-      result,
-      historyDialog,
-      errorIssue,
-      loading,
-      maxTokens: settingForm.value.azureMaxTokens,
-      temperature: settingForm.value.azureTemperature
-    })
-  } else if (
-    settingForm.value.api === 'gemini' &&
-    settingForm.value.geminiAPIKey
-  ) {
-    historyDialog.value = [
-      {
-        role: 'user',
-        parts: [
-          {
-            text: systemMessage + '\n' + userMessage
-          }
-        ]
-      },
-      {
-        role: 'model',
-        parts: [
-          {
-            text: 'Hi, what can I help you?'
-          }
-        ]
-      }
-    ]
-    await API.gemini.createChatCompletionStream({
-      geminiAPIKey: settingForm.value.geminiAPIKey,
-      messages: userMessage,
-      result,
-      historyDialog,
-      errorIssue,
-      loading,
-      maxTokens: settingForm.value.geminiMaxTokens,
-      temperature: settingForm.value.geminiTemperature,
-      geminiModel:
-        settingForm.value.geminiCustomModel ||
-        settingForm.value.geminiModelSelect
-    })
-  } else if (
-    settingForm.value.api === 'ollama' &&
-    settingForm.value.ollamaEndpoint
-  ) {
-    historyDialog.value = [
-      {
-        role: 'user',
-        content: systemMessage + '\n' + userMessage
-      }
-    ]
-    await API.ollama.createChatCompletionStream({
-      ollamaEndpoint: settingForm.value.ollamaEndpoint,
-      ollamaModel:
-        settingForm.value.ollamaCustomModel ||
-        settingForm.value.ollamaModelSelect,
-      messages: historyDialog.value,
-      result,
-      historyDialog,
-      errorIssue,
-      loading,
-      temperature: settingForm.value.ollamaTemperature
-    })
-  } else {
-    ElMessage.error('Set API Key or Access Token first')
-    return
-  }
-  if (errorIssue.value === true) {
-    errorIssue.value = false
-    ElMessage.error('Something is wrong')
-    return
-  }
-  if (!jsonIssue.value) {
-    API.common.insertResult(result, insertType)
-  }
+
+  await API.common.rewriteSelectionParagraphs(
+    rewritten,
+    info.map(i => i.font)
+  )
+
+  loading.value = false
 }
 
 function checkApiKey() {
