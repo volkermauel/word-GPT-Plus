@@ -45,6 +45,11 @@ export type SettingNames =
   | 'ollamaCustomModel'
   | 'ollamaModelSelect'
   | 'ollamaTemperature'
+  | 'openwebEndpoint'
+  | 'openwebCustomModel'
+  | 'openwebModelSelect'
+  | 'openwebTemperature'
+  | 'openwebCollections'
   | 'groqAPIKey'
   | 'groqTemperature'
   | 'groqMaxTokens'
@@ -157,6 +162,16 @@ export const settingPreset: Record<SettingNames, ISettingOption> = {
     availableModelsForOllama
   ),
   ollamaTemperature: inputNumSetting(0.7, 'ollamaTemperature', 'temperature'),
+  openwebEndpoint: defaultInputSetting,
+  openwebCustomModel: defaultInputSetting,
+  openwebModelSelect: selectSetting(
+    '',
+    'openwebModel',
+    optionLists.openwebModelList,
+    availableModelsForOpenweb
+  ),
+  openwebTemperature: inputNumSetting(0.7, 'openwebTemperature', 'temperature'),
+  openwebCollections: defaultInputSetting,
   groqAPIKey: defaultInputSetting,
   groqTemperature: inputNumSetting(0.5, 'groqTemperature', 'temperature'),
   groqMaxTokens: inputNumSetting(1024, 'groqMaxTokens', 'maxTokens'),
