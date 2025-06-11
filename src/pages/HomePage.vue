@@ -442,6 +442,7 @@ const currentModelOptions = computed(() => {
     case 'ollama':
       return ollamaModelOptions.value
     case 'openweb':
+    case 'openweb-ui':
       return openwebModelOptions.value
     case 'groq':
       return settingPreset.groqModelSelect.optionList
@@ -461,6 +462,7 @@ const currentModelPlaceholder = computed(() => {
     case 'ollama':
       return t('ollamaModelSelectPlaceholder')
     case 'openweb':
+    case 'openweb-ui':
       return t('openwebModelSelectPlaceholder')
     case 'groq':
       return t('groqModelSelectPlaceholder')
@@ -481,6 +483,7 @@ const currentModelSelect = computed({
       case 'ollama':
         return settingForm.value.ollamaModelSelect
       case 'openweb':
+      case 'openweb-ui':
         return settingForm.value.openwebModelSelect
       case 'groq':
         return settingForm.value.groqModelSelect
@@ -502,6 +505,7 @@ const currentModelSelect = computed({
         settingForm.value.ollamaModelSelect = value
         break
       case 'openweb':
+      case 'openweb-ui':
         settingForm.value.openwebModelSelect = value
         break
       case 'groq':
@@ -596,7 +600,7 @@ const addWatch = () => {
   watch(
     () => settingForm.value.openwebEndpoint,
     () => {
-      if (settingForm.value.api === 'openweb') {
+      if (['openweb', 'openweb-ui'].includes(settingForm.value.api)) {
         loadOpenwebModels()
       }
     }
@@ -607,7 +611,7 @@ const addWatch = () => {
     val => {
       if (val === 'ollama') {
         loadOllamaModels()
-      } else if (val === 'openweb') {
+      } else if (val === 'openweb' || val === 'openweb-ui') {
         loadOpenwebModels()
       }
     }
@@ -662,7 +666,8 @@ async function template(taskType: keyof typeof buildInPrompt | 'custom') {
 
   if (
     (settingForm.value.api === 'ollama' && !settingForm.value.ollamaEndpoint) ||
-    (settingForm.value.api === 'openweb' && !settingForm.value.openwebEndpoint)
+    ((settingForm.value.api === 'openweb' || settingForm.value.api === 'openweb-ui') &&
+      !settingForm.value.openwebEndpoint)
   ) {
     ElMessage.error(
       'Only Ollama or OpenWebUI API is supported for paragraph rewrite.'
@@ -903,6 +908,7 @@ async function continueChat() {
         })
         break
       case 'openweb':
+      case 'openweb-ui':
         historyDialog.value.push({
           role: 'user',
           content: 'continue'

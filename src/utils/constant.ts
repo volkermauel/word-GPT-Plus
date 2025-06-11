@@ -49,7 +49,8 @@ export const availableAPIs: IStringKeyMap = {
   gemini: 'gemini',
   ollama: 'ollama',
   groq: 'groq',
-  openweb: 'openweb'
+  openweb: 'openweb',
+  'openweb-ui': 'openweb'
 }
 
 // official API 可用的模型
