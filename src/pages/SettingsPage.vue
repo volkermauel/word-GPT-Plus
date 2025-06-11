@@ -143,8 +143,7 @@
                       :placeholder="$t(getPlaceholder(item))"
                     >
                       <el-option
-                        v-for="option in settingPreset[item as SettingNames]
-                          .optionList"
+                        v-for="option in getSelectOptions(item as SettingNames)"
                         :key="option.value"
                         :label="option.label"
                         :value="option.value"
@@ -209,6 +208,17 @@ const ollamaModelOptions = ref<{ label: string; value: string }[]>(
 const openwebModelOptions = ref<{ label: string; value: string }[]>(
   settingPreset.openwebModelSelect.optionList
 )
+
+function getSelectOptions(item: SettingNames) {
+  switch (item) {
+    case 'ollamaModelSelect':
+      return ollamaModelOptions.value
+    case 'openwebModelSelect':
+      return openwebModelOptions.value
+    default:
+      return settingPreset[item].optionList
+  }
+}
 
 async function loadOllamaModels() {
   if (!settingForm.value.ollamaEndpoint) return

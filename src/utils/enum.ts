@@ -33,7 +33,6 @@ export enum localStorageKey {
   openwebEndpoint = 'openwebEndpoint',
   openwebModel = 'openwebModel',
   openwebTemperature = 'openwebTemperature',
-  openwebCustomModel = 'openwebCustomModel',
   openwebCollections = 'openwebCollections',
   openwebToken = 'openwebToken',
   // groq api

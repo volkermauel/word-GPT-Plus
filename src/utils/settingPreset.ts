@@ -47,7 +47,6 @@ export type SettingNames =
   | 'ollamaModelSelect'
   | 'ollamaTemperature'
   | 'openwebEndpoint'
-  | 'openwebCustomModel'
   | 'openwebModelSelect'
   | 'openwebTemperature'
   | 'openwebCollections'
@@ -165,7 +164,6 @@ export const settingPreset: Record<SettingNames, ISettingOption> = {
   ),
   ollamaTemperature: inputNumSetting(0.7, 'ollamaTemperature', 'temperature'),
   openwebEndpoint: defaultInputSetting,
-  openwebCustomModel: defaultInputSetting,
   openwebModelSelect: selectSetting(
     '',
     'openwebModel',
