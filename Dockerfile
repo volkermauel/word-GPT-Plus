@@ -1,10 +1,12 @@
-# Build Stage: use Node.js 18
-FROM node:18-alpine3.19 AS build-stage
+# Build Stage: use Node.js 20
+FROM node:20-alpine3.19 AS build-stage
 WORKDIR /app
 
 # Install dependencies first to leverage Docker cache
 COPY package.json yarn.lock ./
-RUN yarn config set network-timeout 300000 \
+RUN --mount=type=cache,target=/root/.cache \
+    --mount=type=cache,target=/app/node_modules \
+    yarn config set network-timeout 300000 \
     && apk add --no-cache g++ make python3 \
     && yarn global add node-gyp \
     && yarn install --frozen-lockfile
