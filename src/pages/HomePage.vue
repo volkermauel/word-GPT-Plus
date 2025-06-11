@@ -666,7 +666,8 @@ async function template(taskType: keyof typeof buildInPrompt | 'custom') {
 
   if (
     (settingForm.value.api === 'ollama' && !settingForm.value.ollamaEndpoint) ||
-    ((settingForm.value.api === 'openweb' || settingForm.value.api === 'openweb-ui') &&
+    ((settingForm.value.api === 'openweb' ||
+      settingForm.value.api === 'openweb-ui') &&
       !settingForm.value.openwebEndpoint)
   ) {
     ElMessage.error(
