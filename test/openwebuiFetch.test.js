@@ -25,7 +25,7 @@ test('createChatCompletion sends correct request and parses result', async () =>
     openwebToken: 't'
   });
 
-  assert.equal(calledUrl, 'http://test/openai/chat/completions');
+  assert.equal(calledUrl, 'http://test/api/chat/completions');
   assert.equal(calledOptions.method, 'POST');
   const body = JSON.parse(calledOptions.body);
   assert.equal(body.model, 'm');

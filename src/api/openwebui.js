@@ -16,7 +16,7 @@ async function createChatCompletion(options) {
     payload.metadata = { collections: options.collections };
   }
 
-  const response = await fetch(`${formattedEndpoint}/openai/chat/completions`, {
+  const response = await fetch(`${formattedEndpoint}/api/chat/completions`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
