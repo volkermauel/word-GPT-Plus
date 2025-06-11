@@ -1,17 +1,19 @@
-# 第一阶段：使用Node.js 18版本构建Vue项目
-FROM node:18-alpine3.19 as build-stage
+# Build Stage: use Node.js 18
+FROM node:18-alpine3.19 AS build-stage
 WORKDIR /app
 
-# 复制项目文件并安装依赖
+# Install dependencies first to leverage Docker cache
 COPY package.json yarn.lock ./
-RUN yarn config set network-timeout 300000
-RUN apk add g++ make py3-pip
-RUN yarn global add node-gyp
-RUN yarn install
+RUN yarn config set network-timeout 300000 \
+    && apk add --no-cache g++ make python3 \
+    && yarn global add node-gyp \
+    && yarn install --frozen-lockfile
+
+# Copy source code
 COPY . .
 RUN yarn run build
 
-# 第二阶段：使用Nginx构建生产环境镜像
+# Production Stage: nginx to serve built files
 FROM nginx:alpine
 COPY --from=build-stage /app/dist /usr/share/nginx/html
 EXPOSE 80
