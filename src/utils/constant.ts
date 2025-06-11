@@ -184,8 +184,19 @@ export const buildInPrompt = {
     - Ensure proper sentence structure and flow
     - Correct subject-verb agreement issues
     - Improve overall readability
-    Respond in ${language}.
-    If the text is already grammatically correct, respond only with "Sounds good." 
-    Otherwise, provide the corrected version: ${text}`
+      Respond in ${language}.
+      If the text is already grammatically correct, respond only with "Sounds good."
+      Otherwise, provide the corrected version: ${text}`
+  },
+  review: {
+    system: (language: string) =>
+      `You are an experienced editor who provides constructive feedback. Respond in ${language}.`,
+    user: (
+      text: string,
+      language: string
+    ) => `Review the following text and offer brief suggestions to improve clarity, structure, and tone.
+    Reply in ${language} using bullet points.
+
+    Text to review: ${text}`
   }
 }

@@ -43,6 +43,7 @@ Word GPT Plus seamlessly integrates AI models into Microsoft Word, allowing you 
   - Academic writing enhancement
   - Content summarization
   - Grammar checking
+  - Content review
 
 - **Customization Options**:
   - Save custom prompts for repeated use
