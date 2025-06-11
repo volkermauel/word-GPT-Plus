@@ -78,6 +78,30 @@ async function listModels(
   }
 }
 
+async function listCollections(
+  openwebEndpoint: string,
+  openwebToken?: string
+): Promise<string[]> {
+  try {
+    const endpoint = openwebEndpoint.replace(/\/$/, '')
+    const response = await axios.get(
+      `${endpoint}/api/v1/retrieval/collections`,
+      {
+        headers: {
+          ...(openwebToken ? { Authorization: `Bearer ${openwebToken}` } : {})
+        }
+      }
+    )
+    if (response.status !== 200) {
+      throw new Error(`Status code: ${response.status}`)
+    }
+    return response.data?.map((item: { name: string }) => item.name) || []
+  } catch (error) {
+    console.error(error)
+    return []
+  }
+}
+
 async function queryCollections(
   openwebEndpoint: string,
   collections: string[],
@@ -156,5 +180,6 @@ export default {
   createChatCompletionStream,
   createChatCompletion,
   listModels,
-  queryCollections
+  queryCollections,
+  listCollections
 }

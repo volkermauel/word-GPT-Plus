@@ -109,6 +109,8 @@ export const availableModelsForOllama: IStringKeyMap = {
 
 export const availableModelsForOpenweb: IStringKeyMap = {}
 
+export const availableCollectionsForOpenweb: IStringKeyMap = {}
+
 export const availableModelsForGroq: IStringKeyMap = {
   'gemma2-9b-it': 'gemma2-9b-it',
   'gemma-7b-it': 'gemma-7b-it',

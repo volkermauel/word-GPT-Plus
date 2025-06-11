@@ -5,7 +5,8 @@ import {
   availableModelsForGemini,
   availableModelsForGroq,
   availableModelsForOllama,
-  availableModelsForOpenweb
+  availableModelsForOpenweb,
+  availableCollectionsForOpenweb
 } from './constant'
 import { localStorageKey } from './enum'
 
@@ -173,7 +174,12 @@ export const settingPreset: Record<SettingNames, ISettingOption> = {
     availableModelsForOpenweb
   ),
   openwebTemperature: inputNumSetting(0.7, 'openwebTemperature', 'temperature'),
-  openwebCollections: defaultInputSetting,
+  openwebCollections: selectSetting(
+    '',
+    'openwebCollections',
+    optionLists.openwebCollectionList,
+    availableCollectionsForOpenweb
+  ),
   openwebToken: defaultInputSetting,
   groqAPIKey: defaultInputSetting,
   groqTemperature: inputNumSetting(0.5, 'groqTemperature', 'temperature'),

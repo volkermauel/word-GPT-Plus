@@ -210,6 +210,7 @@ const openwebModelOptions = ref<{ label: string; value: string }[]>(
   settingPreset.openwebModelSelect.optionList
 )
 
+
 async function loadOllamaModels() {
   if (!settingForm.value.ollamaEndpoint) return
   const models = await API.ollama.listModels(settingForm.value.ollamaEndpoint)
@@ -230,6 +231,18 @@ async function loadOpenwebModels() {
   if (options.length > 0) {
     settingPreset.openwebModelSelect.optionList = options
     openwebModelOptions.value = options
+  }
+}
+
+async function loadOpenwebCollections() {
+  if (!settingForm.value.openwebEndpoint) return
+  const collections = await API.openweb.listCollections(
+    settingForm.value.openwebEndpoint,
+    settingForm.value.openwebToken
+  )
+  const options = collections.map(item => ({ label: item, value: item }))
+  if (options.length > 0) {
+    settingPreset.openwebCollections.optionList = options
   }
 }
 
@@ -288,6 +301,7 @@ const addWatch = () => {
     () => {
       if (['openweb', 'openweb-ui'].includes(settingForm.value.api)) {
         loadOpenwebModels()
+        loadOpenwebCollections()
       }
     }
   )
@@ -297,6 +311,7 @@ const addWatch = () => {
     () => {
       if (['openweb', 'openweb-ui'].includes(settingForm.value.api)) {
         loadOpenwebModels()
+        loadOpenwebCollections()
       }
     }
   )
@@ -308,6 +323,7 @@ const addWatch = () => {
         loadOllamaModels()
       } else if (val === 'openweb' || val === 'openweb-ui') {
         loadOpenwebModels()
+        loadOpenwebCollections()
       }
     }
   )
@@ -317,6 +333,7 @@ onBeforeMount(() => {
   addWatch()
   loadOllamaModels()
   loadOpenwebModels()
+  loadOpenwebCollections()
 })
 
 function backToHome() {

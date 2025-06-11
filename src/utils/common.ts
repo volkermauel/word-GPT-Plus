@@ -5,6 +5,7 @@ import {
   availableModelsForGroq,
   availableModelsForOllama,
   availableModelsForOpenweb,
+  availableCollectionsForOpenweb,
   languageMap
 } from './constant'
 
@@ -68,7 +69,8 @@ export const optionLists = {
   geminiModelList: getOptionList(availableModelsForGemini),
   ollamaModelList: getOptionList(availableModelsForOllama),
   groqModelList: getOptionList(availableModelsForGroq),
-  openwebModelList: getOptionList(availableModelsForOpenweb)
+  openwebModelList: getOptionList(availableModelsForOpenweb),
+  openwebCollectionList: getOptionList(availableCollectionsForOpenweb)
 }
 
 export const getLabel = (key: string) => `${key}Label`
