@@ -16,6 +16,14 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Update Browserslist database
+        run: npx update-browserslist-db@latest
+
       - name: Set lowercase repository name
         id: repo
         run: |
