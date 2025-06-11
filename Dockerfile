@@ -5,7 +5,7 @@ WORKDIR /app
 # Install dependencies first to leverage Docker cache
 COPY package.json yarn.lock ./
 RUN --mount=type=cache,target=/root/.cache \
-    --mount=type=cache,target=/app/node_modules \
+    # Use cache for yarn's global cache but persist node_modules in the image
     corepack prepare yarn@1.22.19 --activate \
     && yarn config set network-timeout 300000 \
     && apk add --no-cache g++ make python3 \
