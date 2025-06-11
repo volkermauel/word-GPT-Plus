@@ -51,6 +51,7 @@ export type SettingNames =
   | 'openwebModelSelect'
   | 'openwebTemperature'
   | 'openwebCollections'
+  | 'openwebToken'
   | 'groqAPIKey'
   | 'groqTemperature'
   | 'groqMaxTokens'
@@ -173,6 +174,7 @@ export const settingPreset: Record<SettingNames, ISettingOption> = {
   ),
   openwebTemperature: inputNumSetting(0.7, 'openwebTemperature', 'temperature'),
   openwebCollections: defaultInputSetting,
+  openwebToken: defaultInputSetting,
   groqAPIKey: defaultInputSetting,
   groqTemperature: inputNumSetting(0.5, 'groqTemperature', 'temperature'),
   groqMaxTokens: inputNumSetting(1024, 'groqMaxTokens', 'maxTokens'),

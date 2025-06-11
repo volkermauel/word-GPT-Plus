@@ -21,7 +21,8 @@ test('createChatCompletion sends correct request and parses result', async () =>
     openwebModel: 'm',
     messages: [{ role: 'user', content: 'c' }],
     temperature: 1,
-    collections: ['a', 'b']
+    collections: ['a', 'b'],
+    openwebToken: 't'
   });
 
   assert.equal(calledUrl, 'http://test/openai/chat/completions');
@@ -29,5 +30,6 @@ test('createChatCompletion sends correct request and parses result', async () =>
   const body = JSON.parse(calledOptions.body);
   assert.equal(body.model, 'm');
   assert.deepEqual(body.metadata, { collections: ['a', 'b'] });
+  assert.equal(calledOptions.headers.Authorization, 'Bearer t');
   assert.equal(result, 'hello\nworld');
 });

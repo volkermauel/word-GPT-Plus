@@ -35,7 +35,7 @@ Word GPT Plus 是一款将 AI 模型无缝集成到 Microsoft Word 中的插件�
   - Google Gemini Pro API
   - Ollama（用于本地部署）
   - Groq API
-  - OpenWebUI API
+  - OpenWebUI API（支持访问令牌）
 
 - **内置模板**：
   - 翻译（支持 40+ 种语言）

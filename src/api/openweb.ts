@@ -6,6 +6,7 @@ interface ChatCompletionStreamOptions extends BaseChatCompletionOptions {
   openwebEndpoint: string
   openwebModel: string
   collections?: string[]
+  openwebToken?: string
 }
 
 async function createChatCompletionStream(
@@ -24,7 +25,14 @@ async function createChatCompletionStream(
           ? { metadata: { collections: options.collections } }
           : {})
       },
-      { headers: { 'Content-Type': 'application/json' } }
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          ...(options.openwebToken
+            ? { Authorization: `Bearer ${options.openwebToken}` }
+            : {})
+        }
+      }
     )
 
     if (response.status !== 200) {
@@ -49,10 +57,17 @@ async function createChatCompletionStream(
   }
 }
 
-async function listModels(openwebEndpoint: string): Promise<string[]> {
+async function listModels(
+  openwebEndpoint: string,
+  openwebToken?: string
+): Promise<string[]> {
   try {
     const endpoint = openwebEndpoint.replace(/\/$/, '')
-    const response = await axios.get(`${endpoint}/api/v1/models`)
+    const response = await axios.get(`${endpoint}/api/v1/models`, {
+      headers: {
+        ...(openwebToken ? { Authorization: `Bearer ${openwebToken}` } : {})
+      }
+    })
     if (response.status !== 200) {
       throw new Error(`Status code: ${response.status}`)
     }
@@ -66,7 +81,8 @@ async function listModels(openwebEndpoint: string): Promise<string[]> {
 async function queryCollections(
   openwebEndpoint: string,
   collections: string[],
-  query: string
+  query: string,
+  openwebToken?: string
 ): Promise<any> {
   try {
     const endpoint = openwebEndpoint.replace(/\/$/, '')
@@ -76,7 +92,12 @@ async function queryCollections(
         collection_names: collections,
         query
       },
-      { headers: { 'Content-Type': 'application/json' } }
+      {
+        headers: {
+          'Content-Type': 'application/json',
+          ...(openwebToken ? { Authorization: `Bearer ${openwebToken}` } : {})
+        }
+      }
     )
     if (response.status !== 200) {
       throw new Error(`Status code: ${response.status}`)
@@ -94,6 +115,7 @@ interface ChatCompletionOptions {
   messages: { role: string; content: string }[]
   temperature: number
   collections?: string[]
+  openwebToken?: string
 }
 
 async function createChatCompletion(
@@ -111,7 +133,14 @@ async function createChatCompletion(
         ? { metadata: { collections: options.collections } }
         : {})
     },
-    { headers: { 'Content-Type': 'application/json' } }
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        ...(options.openwebToken
+          ? { Authorization: `Bearer ${options.openwebToken}` }
+          : {})
+      }
+    }
   )
 
   if (response.status !== 200) {
