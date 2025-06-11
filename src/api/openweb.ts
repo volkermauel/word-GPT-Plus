@@ -71,7 +71,14 @@ async function listModels(
     if (response.status !== 200) {
       throw new Error(`Status code: ${response.status}`)
     }
-    return response.data?.map((item: { id: string }) => item.id) || []
+    // Open WebUI returns an object like { data: [{ id: "model-name" }, ...] }
+    const models = Array.isArray(response.data?.data)
+      ? response.data.data
+      : Array.isArray(response.data)
+        ? response.data
+        : []
+
+    return models.map((item: { id: string }) => item.id)
   } catch (error) {
     console.error(error)
     return []
