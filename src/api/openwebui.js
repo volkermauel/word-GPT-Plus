@@ -18,7 +18,12 @@ async function createChatCompletion(options) {
 
   const response = await fetch(`${formattedEndpoint}/openai/chat/completions`, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      ...(options.openwebToken
+        ? { Authorization: `Bearer ${options.openwebToken}` }
+        : {})
+    },
     body: JSON.stringify(payload)
   });
 

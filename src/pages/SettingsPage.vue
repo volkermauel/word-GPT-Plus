@@ -222,7 +222,10 @@ async function loadOllamaModels() {
 
 async function loadOpenwebModels() {
   if (!settingForm.value.openwebEndpoint) return
-  const models = await API.openweb.listModels(settingForm.value.openwebEndpoint)
+  const models = await API.openweb.listModels(
+    settingForm.value.openwebEndpoint,
+    settingForm.value.openwebToken
+  )
   const options = models.map(item => ({ label: item, value: item }))
   if (options.length > 0) {
     settingPreset.openwebModelSelect.optionList = options
@@ -282,6 +285,15 @@ const addWatch = () => {
 
   watch(
     () => settingForm.value.openwebEndpoint,
+    () => {
+      if (['openweb', 'openweb-ui'].includes(settingForm.value.api)) {
+        loadOpenwebModels()
+      }
+    }
+  )
+
+  watch(
+    () => settingForm.value.openwebToken,
     () => {
       if (['openweb', 'openweb-ui'].includes(settingForm.value.api)) {
         loadOpenwebModels()

@@ -35,6 +35,7 @@ export enum localStorageKey {
   openwebTemperature = 'openwebTemperature',
   openwebCustomModel = 'openwebCustomModel',
   openwebCollections = 'openwebCollections',
+  openwebToken = 'openwebToken',
   // groq api
   groqAPIKey = 'groqAPIKey',
   groqTemperature = 'groqTemperature',
