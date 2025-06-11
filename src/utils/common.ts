@@ -28,6 +28,7 @@ export function checkAuth(auth: Auth): boolean {
     case 'ollama':
       return true
     case 'openweb':
+    case 'openweb-ui':
       return true
     default:
       return false

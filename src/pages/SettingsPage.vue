@@ -283,7 +283,7 @@ const addWatch = () => {
   watch(
     () => settingForm.value.openwebEndpoint,
     () => {
-      if (settingForm.value.api === 'openweb') {
+      if (['openweb', 'openweb-ui'].includes(settingForm.value.api)) {
         loadOpenwebModels()
       }
     }
@@ -294,7 +294,7 @@ const addWatch = () => {
     val => {
       if (val === 'ollama') {
         loadOllamaModels()
-      } else if (val === 'openweb') {
+      } else if (val === 'openweb' || val === 'openweb-ui') {
         loadOpenwebModels()
       }
     }
