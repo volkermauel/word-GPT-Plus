@@ -15,7 +15,7 @@ async function createChatCompletionStream(
   try {
     const endpoint = options.openwebEndpoint.replace(/\/$/, '')
     const response = await axios.post(
-      `${endpoint}/openai/chat/completions`,
+      `${endpoint}/api/chat/completions`,
       {
         model: options.openwebModel,
         messages: options.messages,
@@ -63,7 +63,7 @@ async function listModels(
 ): Promise<string[]> {
   try {
     const endpoint = openwebEndpoint.replace(/\/$/, '')
-    const response = await axios.get(`${endpoint}/api/v1/models`, {
+    const response = await axios.get(`${endpoint}/api/models`, {
       headers: {
         ...(openwebToken ? { Authorization: `Bearer ${openwebToken}` } : {})
       }
@@ -123,7 +123,7 @@ async function createChatCompletion(
 ): Promise<string> {
   const endpoint = options.openwebEndpoint.replace(/\/$/, '')
   const response = await axios.post(
-    `${endpoint}/openai/chat/completions`,
+    `${endpoint}/api/chat/completions`,
     {
       model: options.openwebModel,
       messages: options.messages,
