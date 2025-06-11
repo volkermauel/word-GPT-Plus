@@ -421,7 +421,6 @@ const loading = ref(false)
 const router = useRouter()
 const historyDialog = ref<any[]>([])
 
-const jsonIssue = ref(false)
 const errorIssue = ref(false)
 
 // insert type
@@ -662,10 +661,12 @@ async function template(taskType: keyof typeof buildInPrompt | 'custom') {
   })
 
   if (
-    settingForm.value.api !== 'ollama' ||
-    !settingForm.value.ollamaEndpoint
+    (settingForm.value.api === 'ollama' && !settingForm.value.ollamaEndpoint) ||
+    (settingForm.value.api === 'openweb' && !settingForm.value.openwebEndpoint)
   ) {
-    ElMessage.error('Only Ollama API is supported for paragraph rewrite.')
+    ElMessage.error(
+      'Only Ollama or OpenWebUI API is supported for paragraph rewrite.'
+    )
     loading.value = false
     return
   }
@@ -708,14 +709,30 @@ async function template(taskType: keyof typeof buildInPrompt | 'custom') {
     ]
 
     try {
-      const response = await API.ollama.createChatCompletion({
-        ollamaEndpoint: settingForm.value.ollamaEndpoint,
-        ollamaModel:
-          settingForm.value.ollamaCustomModel ||
-          settingForm.value.ollamaModelSelect,
-        messages,
-        temperature: settingForm.value.ollamaTemperature
-      })
+      let response = ''
+      if (settingForm.value.api === 'ollama') {
+        response = await API.ollama.createChatCompletion({
+          ollamaEndpoint: settingForm.value.ollamaEndpoint,
+          ollamaModel:
+            settingForm.value.ollamaCustomModel ||
+            settingForm.value.ollamaModelSelect,
+          messages,
+          temperature: settingForm.value.ollamaTemperature
+        })
+      } else {
+        response = await API.openweb.createChatCompletion({
+          openwebEndpoint: settingForm.value.openwebEndpoint,
+          openwebModel:
+            settingForm.value.openwebCustomModel ||
+            settingForm.value.openwebModelSelect,
+          collections: settingForm.value.openwebCollections
+            .split(',')
+            .map(s => s.trim())
+            .filter(Boolean),
+          messages,
+          temperature: settingForm.value.openwebTemperature
+        })
+      }
       const parsed = JSON.parse(response)
       rewritten.push({ reason: parsed.reason, text: parsed.text })
     } catch (e) {
@@ -895,11 +912,10 @@ async function continueChat() {
           openwebModel:
             settingForm.value.openwebCustomModel ||
             settingForm.value.openwebModelSelect,
-          collections:
-            settingForm.value.openwebCollections
-              .split(',')
-              .map(s => s.trim())
-              .filter(Boolean),
+          collections: settingForm.value.openwebCollections
+            .split(',')
+            .map(s => s.trim())
+            .filter(Boolean),
           messages: historyDialog.value,
           result,
           historyDialog,

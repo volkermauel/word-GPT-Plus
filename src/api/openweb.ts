@@ -32,7 +32,13 @@ async function createChatCompletionStream(
     }
 
     updateResult(
-      { content: response.data?.choices?.[0]?.message?.content?.replace(/\\n/g, '\n') ?? '' },
+      {
+        content:
+          response.data?.choices?.[0]?.message?.content?.replace(
+            /\\n/g,
+            '\n'
+          ) ?? ''
+      },
       options.result,
       options.historyDialog
     )
@@ -82,4 +88,44 @@ async function queryCollections(
   }
 }
 
-export default { createChatCompletionStream, listModels, queryCollections }
+interface ChatCompletionOptions {
+  openwebEndpoint: string
+  openwebModel: string
+  messages: { role: string; content: string }[]
+  temperature: number
+  collections?: string[]
+}
+
+async function createChatCompletion(
+  options: ChatCompletionOptions
+): Promise<string> {
+  const endpoint = options.openwebEndpoint.replace(/\/$/, '')
+  const response = await axios.post(
+    `${endpoint}/openai/chat/completions`,
+    {
+      model: options.openwebModel,
+      messages: options.messages,
+      stream: false,
+      temperature: options.temperature,
+      ...(options.collections && options.collections.length
+        ? { metadata: { collections: options.collections } }
+        : {})
+    },
+    { headers: { 'Content-Type': 'application/json' } }
+  )
+
+  if (response.status !== 200) {
+    throw new Error(`Status code: ${response.status}`)
+  }
+
+  return (
+    response.data?.choices?.[0]?.message?.content?.replace(/\\n/g, '\n') ?? ''
+  )
+}
+
+export default {
+  createChatCompletionStream,
+  createChatCompletion,
+  listModels,
+  queryCollections
+}
