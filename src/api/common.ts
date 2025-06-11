@@ -75,9 +75,9 @@ async function rewriteSelectionParagraphs(
         return
       }
       const item = paragraphs[idx]
-      p.insertComment(item.reason)
-      p.insertText(item.text, 'Replace')
-      p.font.set(fonts[idx])
+      ;(p as any).insertComment(item.reason)
+      ;(p as any).insertText(item.text, 'Replace')
+      ;(p.font as any).set(fonts[idx])
     })
 
     await context.sync()

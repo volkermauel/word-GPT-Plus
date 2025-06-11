@@ -4,7 +4,8 @@ import {
   availableModels,
   availableModelsForGemini,
   availableModelsForGroq,
-  availableModelsForOllama
+  availableModelsForOllama,
+  availableModelsForOpenweb
 } from './constant'
 import { localStorageKey } from './enum'
 
