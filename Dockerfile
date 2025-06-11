@@ -6,7 +6,8 @@ WORKDIR /app
 COPY package.json yarn.lock ./
 RUN --mount=type=cache,target=/root/.cache \
     --mount=type=cache,target=/app/node_modules \
-    yarn config set network-timeout 300000 \
+    corepack prepare yarn@1.22.19 --activate \
+    && yarn config set network-timeout 300000 \
     && apk add --no-cache g++ make python3 \
     && yarn global add node-gyp \
     && yarn install --frozen-lockfile
