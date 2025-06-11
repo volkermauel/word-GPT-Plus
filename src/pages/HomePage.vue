@@ -740,9 +740,7 @@ async function template(taskType: keyof typeof buildInPrompt | 'custom') {
       } else {
         response = await API.openweb.createChatCompletion({
           openwebEndpoint: settingForm.value.openwebEndpoint,
-          openwebModel:
-            settingForm.value.openwebCustomModel ||
-            settingForm.value.openwebModelSelect,
+          openwebModel: settingForm.value.openwebModelSelect,
           collections: settingForm.value.openwebCollections
             .split(',')
             .map(s => s.trim())
@@ -929,9 +927,7 @@ async function continueChat() {
         })
         await API.openweb.createChatCompletionStream({
           openwebEndpoint: settingForm.value.openwebEndpoint,
-          openwebModel:
-            settingForm.value.openwebCustomModel ||
-            settingForm.value.openwebModelSelect,
+          openwebModel: settingForm.value.openwebModelSelect,
           collections: settingForm.value.openwebCollections
             .split(',')
             .map(s => s.trim())
