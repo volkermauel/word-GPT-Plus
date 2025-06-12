@@ -144,11 +144,14 @@ async function listCollections(
 ): Promise<string[]> {
   try {
     const endpoint = openwebEndpoint.replace(/\/$/, '')
-    const response = await axios.get(`${endpoint}/api/v1/retrieval/collections`, {
-      headers: {
-        ...(openwebToken ? { Authorization: `Bearer ${openwebToken}` } : {})
+    const response = await axios.get(
+      `${endpoint}/api/v1/retrieval/collections`,
+      {
+        headers: {
+          ...(openwebToken ? { Authorization: `Bearer ${openwebToken}` } : {})
+        }
       }
-    })
+    )
     if (response.status !== 200) {
       throw new Error(`Status code: ${response.status}`)
     }
