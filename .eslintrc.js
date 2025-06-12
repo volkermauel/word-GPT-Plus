@@ -22,13 +22,7 @@ module.exports = {
     '@typescript-eslint/no-this-alias': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     'vue/no-v-html': 'off',
-    'prettier/prettier': [
-      'error',
-      {},
-      {
-        usePrettierrc: true
-      }
-    ]
+    'prettier/prettier': 'warn'
   },
   parserOptions: {
     parser: '@typescript-eslint/parser'

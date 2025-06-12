@@ -265,15 +265,17 @@
                   size="small"
                   type="info"
                   effect="light"
-                  style="margin-left:4px"
-                >WebUI</el-tag>
+                  style="margin-left: 4px"
+                  >WebUI</el-tag
+                >
                 <el-tag
                   v-else-if="item.source === 'openweb-character'"
                   size="small"
                   type="warning"
                   effect="light"
-                  style="margin-left:4px"
-                >Character</el-tag>
+                  style="margin-left: 4px"
+                  >Character</el-tag
+                >
               </el-option>
             </el-select>
             <el-input
@@ -287,7 +289,9 @@
           </div>
           <div class="config-section">
             <div class="section-header">
-              <label class="section-label">{{ $t('openwebCollectionsLabel') }}</label>
+              <label class="section-label">{{
+                $t('openwebCollectionsLabel')
+              }}</label>
             </div>
             <el-checkbox-group v-model="openwebCollectionSelected">
               <el-checkbox
@@ -407,7 +411,10 @@ async function loadOpenwebCollections() {
     settingForm.value.openwebEndpoint,
     settingForm.value.openwebToken
   )
-  openwebCollectionOptions.value = cols.map(item => ({ label: item, value: item }))
+  openwebCollectionOptions.value = cols.map(item => ({
+    label: item,
+    value: item
+  }))
 }
 
 async function loadOpenwebModels() {
@@ -644,9 +651,11 @@ async function initData() {
   await loadOpenwebCharacters()
   await loadOpenwebCollections()
   if (
-    [...promptList.value, ...openwebPromptList.value, ...openwebCharacterList.value].find(
-      item => item.value === prompt.value
-    )
+    [
+      ...promptList.value,
+      ...openwebPromptList.value,
+      ...openwebCharacterList.value
+    ].find(item => item.value === prompt.value)
   ) {
     promptSelected.value = prompt.value
   }
