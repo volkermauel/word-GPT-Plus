@@ -254,11 +254,27 @@
               @change="handlePromptChange"
             >
               <el-option
-                v-for="item in promptList"
+                v-for="item in allPromptOptions"
                 :key="item.value"
                 :label="item.key"
                 :value="item.value"
-              />
+              >
+                <span>{{ item.key }}</span>
+                <el-tag
+                  v-if="item.source === 'openweb'"
+                  size="small"
+                  type="info"
+                  effect="light"
+                  style="margin-left:4px"
+                >WebUI</el-tag>
+                <el-tag
+                  v-else-if="item.source === 'openweb-character'"
+                  size="small"
+                  type="warning"
+                  effect="light"
+                  style="margin-left:4px"
+                >Character</el-tag>
+              </el-option>
             </el-select>
             <el-input
               v-model="prompt"
@@ -368,6 +384,9 @@ const openwebModelOptions = ref<{ label: string; value: string }[]>(
   settingPreset.openwebModelSelect.optionList
 )
 
+const openwebPromptList = ref<IStringKeyMap[]>([])
+const openwebCharacterList = ref<IStringKeyMap[]>([])
+
 async function loadOpenwebModels() {
   if (!settingForm.value.openwebEndpoint) return
   const models = await API.openweb.listModels(
@@ -379,6 +398,32 @@ async function loadOpenwebModels() {
     settingPreset.openwebModelSelect.optionList = options
     openwebModelOptions.value = options
   }
+}
+
+async function loadOpenwebPrompts() {
+  if (!settingForm.value.openwebEndpoint) return
+  const prompts = await API.openweb.listPrompts(
+    settingForm.value.openwebEndpoint,
+    settingForm.value.openwebToken
+  )
+  openwebPromptList.value = prompts.map(p => ({
+    key: p.title || p.command,
+    value: p.content,
+    source: 'openweb'
+  }))
+}
+
+async function loadOpenwebCharacters() {
+  if (!settingForm.value.openwebEndpoint) return
+  const characters = await API.openweb.listCharacters(
+    settingForm.value.openwebEndpoint,
+    settingForm.value.openwebToken
+  )
+  openwebCharacterList.value = characters.map(c => ({
+    key: c.name,
+    value: c.prompt,
+    source: 'openweb-character'
+  }))
 }
 
 // system prompt
@@ -400,6 +445,12 @@ const addPromptAlias = ref('')
 const addPromptValue = ref('')
 const removePromptVisible = ref(false)
 const removePromptValue = ref<any[]>([])
+
+const allPromptOptions = computed(() => [
+  ...promptList.value,
+  ...openwebPromptList.value,
+  ...openwebCharacterList.value
+])
 
 // result
 const result = ref('res')
@@ -511,6 +562,8 @@ const addWatch = () => {
     () => {
       if (settingForm.value.api === 'open-webui') {
         loadOpenwebModels()
+        loadOpenwebPrompts()
+        loadOpenwebCharacters()
       }
     }
   )
@@ -519,6 +572,8 @@ const addWatch = () => {
     () => {
       if (settingForm.value.api === 'open-webui') {
         loadOpenwebModels()
+        loadOpenwebPrompts()
+        loadOpenwebCharacters()
       }
     }
   )
@@ -527,6 +582,8 @@ const addWatch = () => {
     val => {
       if (val === 'open-webui') {
         loadOpenwebModels()
+        loadOpenwebPrompts()
+        loadOpenwebCharacters()
       }
     }
   )
@@ -545,7 +602,13 @@ async function initData() {
   }
   prompt.value = localStorage.getItem(localStorageKey.defaultPrompt) || ''
   await getPromptList()
-  if (promptList.value.find(item => item.value === prompt.value)) {
+  await loadOpenwebPrompts()
+  await loadOpenwebCharacters()
+  if (
+    [...promptList.value, ...openwebPromptList.value, ...openwebCharacterList.value].find(
+      item => item.value === prompt.value
+    )
+  ) {
     promptSelected.value = prompt.value
   }
 }
@@ -715,6 +778,8 @@ async function continueChat() {
 onBeforeMount(() => {
   addWatch()
   loadOpenwebModels()
+  loadOpenwebPrompts()
+  loadOpenwebCharacters()
   initData()
 })
 </script>
