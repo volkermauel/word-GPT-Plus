@@ -285,6 +285,19 @@
               @blur="handlePromptChange(prompt)"
             />
           </div>
+          <div class="config-section">
+            <div class="section-header">
+              <label class="section-label">{{ $t('openwebCollectionsLabel') }}</label>
+            </div>
+            <el-checkbox-group v-model="openwebCollectionSelected">
+              <el-checkbox
+                v-for="item in openwebCollectionOptions"
+                :key="item.value"
+                :label="item.value"
+                >{{ item.label }}</el-checkbox
+              >
+            </el-checkbox-group>
+          </div>
         </el-card>
 
         <el-card class="results-card" shadow="hover">
@@ -386,6 +399,16 @@ const openwebModelOptions = ref<{ label: string; value: string }[]>(
 
 const openwebPromptList = ref<IStringKeyMap[]>([])
 const openwebCharacterList = ref<IStringKeyMap[]>([])
+const openwebCollectionOptions = ref<{ label: string; value: string }[]>([])
+
+async function loadOpenwebCollections() {
+  if (!settingForm.value.openwebEndpoint) return
+  const cols = await API.openweb.listCollections(
+    settingForm.value.openwebEndpoint,
+    settingForm.value.openwebToken
+  )
+  openwebCollectionOptions.value = cols.map(item => ({ label: item, value: item }))
+}
 
 async function loadOpenwebModels() {
   if (!settingForm.value.openwebEndpoint) return
@@ -488,6 +511,18 @@ const currentModelSelect = computed({
   }
 })
 
+const openwebCollectionSelected = computed({
+  get() {
+    return settingForm.value.openwebCollections
+      .split(',')
+      .map(s => s.trim())
+      .filter(Boolean)
+  },
+  set(value: string[]) {
+    settingForm.value.openwebCollections = value.join(',')
+  }
+})
+
 async function getSystemPromptList() {
   const table = promptDbInstance.table('systemPrompt')
   const list = (await table.toArray()) as unknown as IStringKeyMap[]
@@ -564,6 +599,7 @@ const addWatch = () => {
         loadOpenwebModels()
         loadOpenwebPrompts()
         loadOpenwebCharacters()
+        loadOpenwebCollections()
       }
     }
   )
@@ -574,6 +610,7 @@ const addWatch = () => {
         loadOpenwebModels()
         loadOpenwebPrompts()
         loadOpenwebCharacters()
+        loadOpenwebCollections()
       }
     }
   )
@@ -584,6 +621,7 @@ const addWatch = () => {
         loadOpenwebModels()
         loadOpenwebPrompts()
         loadOpenwebCharacters()
+        loadOpenwebCollections()
       }
     }
   )
@@ -604,6 +642,7 @@ async function initData() {
   await getPromptList()
   await loadOpenwebPrompts()
   await loadOpenwebCharacters()
+  await loadOpenwebCollections()
   if (
     [...promptList.value, ...openwebPromptList.value, ...openwebCharacterList.value].find(
       item => item.value === prompt.value
@@ -780,6 +819,7 @@ onBeforeMount(() => {
   loadOpenwebModels()
   loadOpenwebPrompts()
   loadOpenwebCharacters()
+  loadOpenwebCollections()
   initData()
 })
 </script>
