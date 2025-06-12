@@ -1,4 +1,8 @@
-import { availableAPIs, availableModelsForOpenweb, languageMap } from './constant'
+import {
+  availableAPIs,
+  availableModelsForOpenweb,
+  languageMap
+} from './constant'
 
 export interface Auth {
   type: supportedPlatforms
