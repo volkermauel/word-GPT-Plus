@@ -26,11 +26,6 @@ function useSettingForm() {
       localStorage.getItem(storageKey) || settingForm.value[typedKey]
   })
 
-  // Special case for legacy support
-  if (settingForm.value.api === 'palm') {
-    settingForm.value.api = 'gemini'
-    localStorage.setItem('api', 'gemini')
-  }
 
   return {
     settingForm,

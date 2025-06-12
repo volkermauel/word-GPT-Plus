@@ -1,12 +1,4 @@
-import {
-  availableAPIs,
-  availableModels,
-  availableModelsForGemini,
-  availableModelsForGroq,
-  availableModelsForOllama,
-  availableModelsForOpenweb,
-  languageMap
-} from './constant'
+import { availableAPIs, availableModelsForOpenweb, languageMap } from './constant'
 
 export interface Auth {
   type: supportedPlatforms
@@ -17,18 +9,7 @@ export function checkAuth(auth: Auth): boolean {
   if (!auth) return false
 
   switch (auth.type) {
-    case 'official':
-      return !!auth.apiKey
-    case 'azure':
-      return !!auth.azureAPIKey
-    case 'gemini':
-      return !!auth.geminiAPIKey
-    case 'groq':
-      return !!auth.groqAPIKey
-    case 'ollama':
-      return true
-    case 'openweb':
-    case 'openweb-ui':
+    case 'open-webui':
       return true
     default:
       return false
@@ -64,10 +45,6 @@ export const optionLists = {
   localLanguageList,
   apiList: getOptionList(availableAPIs),
   replyLanguageList: getOptionList(languageMap, 'value'),
-  officialModelList: getOptionList(availableModels),
-  geminiModelList: getOptionList(availableModelsForGemini),
-  ollamaModelList: getOptionList(availableModelsForOllama),
-  groqModelList: getOptionList(availableModelsForGroq),
   openwebModelList: getOptionList(availableModelsForOpenweb)
 }
 

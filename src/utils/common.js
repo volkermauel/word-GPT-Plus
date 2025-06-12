@@ -1,17 +1,7 @@
 function checkAuth(auth) {
   if (!auth) return false;
   switch (auth.type) {
-    case 'official':
-      return !!auth.apiKey;
-    case 'azure':
-      return !!auth.azureAPIKey;
-    case 'gemini':
-      return !!auth.geminiAPIKey;
-    case 'groq':
-      return !!auth.groqAPIKey;
-    case 'ollama':
-      return true;
-    case 'openweb':
+    case 'open-webui':
       return true;
     default:
       return false;

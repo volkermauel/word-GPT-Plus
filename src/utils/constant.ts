@@ -44,80 +44,11 @@ export const languageMap: IStringKeyMap = {
 }
 
 export const availableAPIs: IStringKeyMap = {
-  official: 'official',
-  azure: 'azure',
-  gemini: 'gemini',
-  ollama: 'ollama',
-  groq: 'groq',
-  openweb: 'openweb',
-  'openweb-ui': 'openweb'
+  'open-webui': 'open-webui'
 }
 
 // official API 可用的模型
-export const availableModels: IStringKeyMap = {
-  'gpt-4o': 'gpt-4o',
-  'gpt-4o-mini': 'gpt-4o-mini',
-  'o1-preview': 'o1-preview',
-  'o1-mini': 'o1-mini',
-  'gpt-3.5': 'gpt-3.5-turbo',
-  'gpt-3.5-turbo-1106': 'gpt-3.5-turbo-1106',
-  gpt4: 'gpt-4',
-  'gpt-4-turbo': 'gpt-4-turbo',
-  'gpt-4-turbo-preview': 'gpt-4-turbo-preview',
-  'gpt4-0613': 'gpt-4-0613'
-}
-
-// Gemini API 可用的模型
-export const availableModelsForGemini: IStringKeyMap = {
-  'gemini-2.0-flash': 'gemini-2.0-flash',
-  'gemini-2.0-flash-lite': 'gemini-2.0-flash-lite',
-  'gemini-1.5-flash': 'gemini-1.5-flash',
-  'gemini-1.5-flash-8b': 'gemini-1.5-flash-8b',
-  'gemini-1.0-pro': 'gemini-1.0-pro',
-  'gemini-1.5-pro': 'gemini-1.5-pro',
-  'gemini-exp-1114': 'gemini-exp-1114',
-  aqa: 'aqa'
-}
-
-// Ollama API 可用的模型
-export const availableModelsForOllama: IStringKeyMap = {
-  llama3: 'llama3',
-  llama2: 'llama2',
-  phi3: 'phi3',
-  wizardlm2: 'wizardlm2',
-  mistral: 'mistral',
-  'llama2-uncensored': 'llama2-uncensored',
-  'llama2:13b': 'llama2:13b',
-  'llama2:70b': 'llama2:70b',
-  'gemma:2b': 'gemma:2b',
-  'gemma:7b': 'gemma:7b',
-  qwen: 'qwen',
-  codegemma: 'codegemma',
-  'command-r': 'command-r',
-  'command-r-plus': 'command-r-plus',
-  llava: 'llava',
-  codellama: 'codellama',
-  yi: 'yi',
-  codeqwen: 'codeqwen',
-  'dolphin-phi': 'dolphin-phi',
-  phi: 'phi',
-  'neural-chat': 'neural-chat',
-  'starlinh-lm': 'starlinh-lm',
-  'orca-mini': 'orca-mini',
-  vicuna: 'vicuna'
-}
-
 export const availableModelsForOpenweb: IStringKeyMap = {}
-
-export const availableModelsForGroq: IStringKeyMap = {
-  'gemma2-9b-it': 'gemma2-9b-it',
-  'gemma-7b-it': 'gemma-7b-it',
-  'llama3-70b-8192': 'llama3-70b-8192',
-  'llama3-8b-8192': 'llama3-8b-8192',
-  'mixtral-8x7b-32768': 'mixtral-8x7b-32768',
-  'whisper-large-v3': 'whisper-large-v3',
-  'deepseek-r1-distill-llama-70b': 'deepseek-r1-distill-llama-70b'
-}
 
 export const buildInPrompt = {
   translate: {

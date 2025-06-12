@@ -6,12 +6,7 @@ const utils = require('../src/utils/common.js');
 // checkAuth tests
 
 test('checkAuth returns correct boolean based on auth type', () => {
-  assert.equal(utils.checkAuth({ type: 'official', apiKey: 'k' }), true);
-  assert.equal(utils.checkAuth({ type: 'azure', azureAPIKey: '' }), false);
-  assert.equal(utils.checkAuth({ type: 'gemini', geminiAPIKey: '1' }), true);
-  assert.equal(utils.checkAuth({ type: 'groq', groqAPIKey: undefined }), false);
-  assert.equal(utils.checkAuth({ type: 'ollama' }), true);
-  assert.equal(utils.checkAuth({ type: 'openweb' }), true);
+  assert.equal(utils.checkAuth({ type: 'open-webui' }), true);
   assert.equal(utils.checkAuth(null), false);
 });
 
