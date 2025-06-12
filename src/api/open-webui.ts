@@ -85,6 +85,59 @@ async function listModels(
   }
 }
 
+interface PromptItem {
+  command: string
+  title: string
+  content: string
+}
+
+async function listPrompts(
+  openwebEndpoint: string,
+  openwebToken?: string
+): Promise<PromptItem[]> {
+  try {
+    const endpoint = openwebEndpoint.replace(/\/$/, '')
+    const response = await axios.get(`${endpoint}/api/prompts`, {
+      headers: {
+        ...(openwebToken ? { Authorization: `Bearer ${openwebToken}` } : {})
+      }
+    })
+    if (response.status !== 200) {
+      throw new Error(`Status code: ${response.status}`)
+    }
+    return Array.isArray(response.data) ? response.data : []
+  } catch (error) {
+    console.error(error)
+    return []
+  }
+}
+
+interface CharacterItem {
+  name: string
+  prompt: string
+}
+
+async function listCharacters(
+  openwebEndpoint: string,
+  openwebToken?: string
+): Promise<CharacterItem[]> {
+  try {
+    const endpoint = openwebEndpoint.replace(/\/$/, '')
+    const response = await axios.get(`${endpoint}/api/characters`, {
+      headers: {
+        ...(openwebToken ? { Authorization: `Bearer ${openwebToken}` } : {})
+      }
+    })
+    if (response.status !== 200) {
+      throw new Error(`Status code: ${response.status}`)
+    }
+    return Array.isArray(response.data) ? response.data : []
+  } catch (error) {
+    console.error(error)
+    return []
+  }
+}
+
 async function queryCollections(
   openwebEndpoint: string,
   collections: string[],
@@ -163,5 +216,7 @@ export default {
   createChatCompletionStream,
   createChatCompletion,
   listModels,
+  listPrompts,
+  listCharacters,
   queryCollections
 }

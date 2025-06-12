@@ -36,4 +36,35 @@ async function createChatCompletion(options) {
   return data?.choices?.[0]?.message?.content?.replace(/\\n/g, '\n') ?? '';
 }
 
-module.exports = { createChatCompletion };
+async function listPrompts(openwebEndpoint, openwebToken) {
+  const formattedEndpoint = openwebEndpoint.replace(/\/$/, '');
+  const response = await fetch(`${formattedEndpoint}/api/prompts`, {
+    method: 'GET',
+    headers: {
+      ...(openwebToken ? { Authorization: `Bearer ${openwebToken}` } : {})
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error(`Status code: ${response.status}`);
+  }
+
+  return await response.json();
+}
+
+async function listCharacters(openwebEndpoint, openwebToken) {
+  const formattedEndpoint = openwebEndpoint.replace(/\/$/, '');
+  const response = await fetch(`${formattedEndpoint}/api/characters`, {
+    method: 'GET',
+    headers: {
+      ...(openwebToken ? { Authorization: `Bearer ${openwebToken}` } : {})
+    }
+  });
+
+  if (!response.ok) {
+    throw new Error(`Status code: ${response.status}`);
+  }
+
+  return await response.json();
+}
+module.exports = { createChatCompletion, listPrompts, listCharacters };
