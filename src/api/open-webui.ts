@@ -138,6 +138,27 @@ async function listCharacters(
   }
 }
 
+async function listCollections(
+  openwebEndpoint: string,
+  openwebToken?: string
+): Promise<string[]> {
+  try {
+    const endpoint = openwebEndpoint.replace(/\/$/, '')
+    const response = await axios.get(`${endpoint}/api/v1/retrieval/collections`, {
+      headers: {
+        ...(openwebToken ? { Authorization: `Bearer ${openwebToken}` } : {})
+      }
+    })
+    if (response.status !== 200) {
+      throw new Error(`Status code: ${response.status}`)
+    }
+    return Array.isArray(response.data) ? response.data : []
+  } catch (error) {
+    console.error(error)
+    return []
+  }
+}
+
 async function queryCollections(
   openwebEndpoint: string,
   collections: string[],
@@ -218,5 +239,6 @@ export default {
   listModels,
   listPrompts,
   listCharacters,
+  listCollections,
   queryCollections
 }

@@ -3,7 +3,8 @@ const { test } = require('node:test');
 const {
   createChatCompletion,
   listPrompts,
-  listCharacters
+  listCharacters,
+  listCollections
 } = require('../src/api/open-webui');
 
 test('createChatCompletion sends correct request and parses result', async () => {
@@ -81,4 +82,26 @@ test('listCharacters fetches character list', async () => {
   assert.equal(calledOptions.method, 'GET');
   assert.equal(calledOptions.headers.Authorization, 'Bearer t');
   assert.deepEqual(result, [{ name: 'Alice', prompt: 'hello' }]);
+});
+
+test('listCollections fetches collection names', async () => {
+  let calledUrl = '';
+  let calledOptions;
+  const mockResponse = {
+    ok: true,
+    status: 200,
+    json: async () => ['c1', 'c2']
+  };
+  global.fetch = async (url, options) => {
+    calledUrl = url;
+    calledOptions = options;
+    return mockResponse;
+  };
+
+  const result = await listCollections('http://test/', 't');
+
+  assert.equal(calledUrl, 'http://test/api/v1/retrieval/collections');
+  assert.equal(calledOptions.method, 'GET');
+  assert.equal(calledOptions.headers.Authorization, 'Bearer t');
+  assert.deepEqual(result, ['c1', 'c2']);
 });
