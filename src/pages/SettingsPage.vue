@@ -214,7 +214,6 @@ function getSelectOptions(item: SettingNames) {
   }
 }
 
-
 async function loadOpenwebModels() {
   if (!settingForm.value.openwebEndpoint) return
   const models = await API.openweb.listModels(
@@ -268,7 +267,6 @@ const addWatch = () => {
       }
     )
   })
-
 
   watch(
     () => settingForm.value.openwebEndpoint,

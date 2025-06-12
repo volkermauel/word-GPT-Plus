@@ -353,7 +353,6 @@ import API from '@/api'
 import { buildInPrompt } from '@/utils/constant'
 import { promptDbInstance } from '@/store/promtStore'
 
-import { checkAuth } from '@/utils/common'
 import { localStorageKey } from '@/utils/enum'
 import useSettingForm from '@/utils/settingForm'
 import { settingPreset } from '@/utils/settingPreset'
@@ -507,8 +506,6 @@ const addWatch = () => {
       localStorage.setItem('replyLanguage', settingForm.value.replyLanguage)
     }
   )
-
-
   watch(
     () => settingForm.value.openwebEndpoint,
     () => {
@@ -517,7 +514,6 @@ const addWatch = () => {
       }
     }
   )
-
   watch(
     () => settingForm.value.openwebToken,
     () => {
@@ -526,7 +522,6 @@ const addWatch = () => {
       }
     }
   )
-
   watch(
     () => settingForm.value.api,
     val => {

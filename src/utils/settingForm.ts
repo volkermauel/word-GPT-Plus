@@ -26,7 +26,6 @@ function useSettingForm() {
       localStorage.getItem(storageKey) || settingForm.value[typedKey]
   })
 
-
   return {
     settingForm,
     settingFormKeys: Object.keys(settingForm.value) as SettingNames[]
