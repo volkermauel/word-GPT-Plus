@@ -286,6 +286,10 @@
             :placeholder="$t('result')"
             resize="vertical"
           />
+          <details class="json-box">
+            <summary>{{ $t('jsonResult') }}</summary>
+            <pre>{{ jsonOutput }}</pre>
+          </details>
         </el-card>
       </div>
     </div>
@@ -405,6 +409,7 @@ const router = useRouter()
 const historyDialog = ref<any[]>([])
 
 const errorIssue = ref(false)
+const jsonOutput = ref('')
 
 // insert type
 const insertType = ref<insertTypes>('replace')
@@ -557,6 +562,7 @@ function handleInsertTypeChange(val: insertTypes) {
 
 async function template(taskType: keyof typeof buildInPrompt | 'custom') {
   loading.value = true
+  jsonOutput.value = ''
   await API.common.enableTrackChanges()
 
   const info = await Word.run(async context => {
@@ -639,6 +645,7 @@ async function template(taskType: keyof typeof buildInPrompt | 'custom') {
       console.error(e)
       errorIssue.value = true
       loading.value = false
+      jsonOutput.value = e instanceof Error ? e.stack || String(e) : String(e)
       ElMessage.error('AI response error')
       return
     }
@@ -648,6 +655,8 @@ async function template(taskType: keyof typeof buildInPrompt | 'custom') {
     rewritten,
     info.map(i => i.font)
   )
+
+  jsonOutput.value = JSON.stringify(rewritten, null, 2)
 
   loading.value = false
 }
@@ -675,6 +684,7 @@ function StartChat() {
 async function continueChat() {
   if (!checkApiKey()) return
   loading.value = true
+  jsonOutput.value = ''
   try {
     historyDialog.value.push({ role: 'user', content: 'continue' })
     await API.openweb.createChatCompletionStream({
@@ -1295,6 +1305,24 @@ onBeforeMount(() => {
 .result-textarea:deep(.el-textarea__inner:focus) {
   border-color: #409eff;
   box-shadow: 0 0 0 2px rgba(64, 158, 255, 0.2);
+}
+
+.json-box {
+  margin-top: 8px;
+  border: 1px dashed #dcdfe6;
+  border-radius: 6px;
+  padding: 6px;
+  background: #f9f9f9;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 12px;
+}
+.json-box summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+.json-box pre {
+  white-space: pre-wrap;
+  margin: 4px 0 0 0;
 }
 
 /* Responsive Design */
