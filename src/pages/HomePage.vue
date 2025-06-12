@@ -709,9 +709,7 @@ async function template(taskType: keyof typeof buildInPrompt | 'custom') {
 
   if (taskType === 'custom') {
     let systemMessage
-    const numbered = info
-      .map((p, idx) => `[${idx + 1}] ${p.text}`)
-      .join('\n')
+    const numbered = info.map((p, idx) => `[${idx + 1}] ${p.text}`).join('\n')
     if (systemPrompt.value.includes('{language}')) {
       systemMessage = systemPrompt.value.replace(
         '{language}',
@@ -765,14 +763,12 @@ async function template(taskType: keyof typeof buildInPrompt | 'custom') {
     }
   } else {
     for (const p of info) {
-      let systemMessage
-      let userMessage = ''
       const paragraphText = p.text
 
-      systemMessage = buildInPrompt[taskType].system(
+      const systemMessage = buildInPrompt[taskType].system(
         settingForm.value.replyLanguage
       )
-      userMessage = buildInPrompt[taskType].user(
+      const userMessage = buildInPrompt[taskType].user(
         paragraphText,
         settingForm.value.replyLanguage
       )
