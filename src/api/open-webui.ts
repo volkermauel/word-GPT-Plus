@@ -138,6 +138,32 @@ async function listCharacters(
   }
 }
 
+interface KnowledgeItem {
+  id: string
+  name: string
+}
+
+async function listCollections(
+  openwebEndpoint: string,
+  openwebToken?: string
+): Promise<KnowledgeItem[]> {
+  try {
+    const endpoint = openwebEndpoint.replace(/\/$/, '')
+    const response = await axios.get(`${endpoint}/api/knowledge/list`, {
+      headers: {
+        ...(openwebToken ? { Authorization: `Bearer ${openwebToken}` } : {})
+      }
+    })
+    if (response.status !== 200) {
+      throw new Error(`Status code: ${response.status}`)
+    }
+    return Array.isArray(response.data) ? response.data : []
+  } catch (error) {
+    console.error(error)
+    return []
+  }
+}
+
 async function queryCollections(
   openwebEndpoint: string,
   collections: string[],
@@ -218,5 +244,6 @@ export default {
   listModels,
   listPrompts,
   listCharacters,
+  listCollections,
   queryCollections
 }

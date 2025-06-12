@@ -265,15 +265,17 @@
                   size="small"
                   type="info"
                   effect="light"
-                  style="margin-left:4px"
-                >WebUI</el-tag>
+                  style="margin-left: 4px"
+                  >WebUI</el-tag
+                >
                 <el-tag
                   v-else-if="item.source === 'openweb-character'"
                   size="small"
                   type="warning"
                   effect="light"
-                  style="margin-left:4px"
-                >Character</el-tag>
+                  style="margin-left: 4px"
+                  >Character</el-tag
+                >
               </el-option>
             </el-select>
             <el-input
@@ -284,6 +286,29 @@
               :placeholder="$t('homePromptDescription')"
               @blur="handlePromptChange(prompt)"
             />
+          </div>
+
+          <div class="config-section">
+            <div class="section-header">
+              <label class="section-label">{{
+                $t('openwebCollectionsLabel')
+              }}</label>
+            </div>
+            <el-select
+              v-model="selectedCollections"
+              class="config-select"
+              size="small"
+              multiple
+              collapse-tags
+              :placeholder="$t('openwebCollectionsPlaceholder')"
+            >
+              <el-option
+                v-for="item in openwebCollectionOptions"
+                :key="item.value"
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
           </div>
         </el-card>
 
@@ -386,6 +411,7 @@ const openwebModelOptions = ref<{ label: string; value: string }[]>(
 
 const openwebPromptList = ref<IStringKeyMap[]>([])
 const openwebCharacterList = ref<IStringKeyMap[]>([])
+const openwebCollectionOptions = ref<{ label: string; value: string }[]>([])
 
 async function loadOpenwebModels() {
   if (!settingForm.value.openwebEndpoint) return
@@ -423,6 +449,18 @@ async function loadOpenwebCharacters() {
     key: c.name,
     value: c.prompt,
     source: 'openweb-character'
+  }))
+}
+
+async function loadOpenwebCollections() {
+  if (!settingForm.value.openwebEndpoint) return
+  const collections = await API.openweb.listCollections(
+    settingForm.value.openwebEndpoint,
+    settingForm.value.openwebToken
+  )
+  openwebCollectionOptions.value = collections.map(c => ({
+    label: c.name,
+    value: c.id
   }))
 }
 
@@ -485,6 +523,18 @@ const currentModelSelect = computed({
   },
   set(value) {
     settingForm.value.openwebModelSelect = value
+  }
+})
+
+const selectedCollections = computed({
+  get() {
+    return settingForm.value.openwebCollections
+      .split(',')
+      .map(s => s.trim())
+      .filter(Boolean)
+  },
+  set(val: string[]) {
+    settingForm.value.openwebCollections = val.join(',')
   }
 })
 
@@ -564,6 +614,7 @@ const addWatch = () => {
         loadOpenwebModels()
         loadOpenwebPrompts()
         loadOpenwebCharacters()
+        loadOpenwebCollections()
       }
     }
   )
@@ -574,6 +625,7 @@ const addWatch = () => {
         loadOpenwebModels()
         loadOpenwebPrompts()
         loadOpenwebCharacters()
+        loadOpenwebCollections()
       }
     }
   )
@@ -584,6 +636,7 @@ const addWatch = () => {
         loadOpenwebModels()
         loadOpenwebPrompts()
         loadOpenwebCharacters()
+        loadOpenwebCollections()
       }
     }
   )
@@ -604,10 +657,13 @@ async function initData() {
   await getPromptList()
   await loadOpenwebPrompts()
   await loadOpenwebCharacters()
+  await loadOpenwebCollections()
   if (
-    [...promptList.value, ...openwebPromptList.value, ...openwebCharacterList.value].find(
-      item => item.value === prompt.value
-    )
+    [
+      ...promptList.value,
+      ...openwebPromptList.value,
+      ...openwebCharacterList.value
+    ].find(item => item.value === prompt.value)
   ) {
     promptSelected.value = prompt.value
   }
@@ -649,66 +705,71 @@ async function template(taskType: keyof typeof buildInPrompt | 'custom') {
   }
 
   const rewritten: { reason: string; text: string }[] = []
-  for (const p of info) {
-    let systemMessage
-    let userMessage = ''
-    const paragraphText = p.text
+  const numberedText = info.map((p, idx) => `[${idx + 1}] ${p.text}`).join('\n')
 
-    if (taskType === 'custom') {
-      if (systemPrompt.value.includes('{language}')) {
-        systemMessage = systemPrompt.value.replace(
-          '{language}',
-          settingForm.value.replyLanguage
-        )
-      } else {
-        systemMessage = systemPrompt.value
-      }
-      if (userMessage.includes('{text}')) {
-        userMessage = userMessage.replace('{text}', paragraphText)
-      } else {
-        userMessage = `Reply in ${settingForm.value.replyLanguage} ${prompt.value} ${paragraphText}`
-      }
+  let systemMessage
+  let userMessage = ''
+
+  if (taskType === 'custom') {
+    if (systemPrompt.value.includes('{language}')) {
+      systemMessage = systemPrompt.value.replace(
+        '{language}',
+        settingForm.value.replyLanguage
+      )
     } else {
-      systemMessage = buildInPrompt[taskType].system(
-        settingForm.value.replyLanguage
-      )
-      userMessage = buildInPrompt[taskType].user(
-        paragraphText,
-        settingForm.value.replyLanguage
-      )
+      systemMessage = systemPrompt.value
     }
+    if (prompt.value.includes('{text}')) {
+      userMessage = prompt.value.replace('{text}', numberedText)
+    } else {
+      userMessage = `Reply in ${settingForm.value.replyLanguage} ${prompt.value} ${numberedText}`
+    }
+  } else {
+    systemMessage = buildInPrompt[taskType].system(
+      settingForm.value.replyLanguage
+    )
+    userMessage = buildInPrompt[taskType].user(
+      numberedText,
+      settingForm.value.replyLanguage
+    )
+  }
 
-    const instruction =
-      'Return a JSON object with keys "reason" and "text". "reason" briefly explains your changes. "text" is the rewritten paragraph.'
-    const messages = [
-      { role: 'system', content: systemMessage },
-      { role: 'user', content: userMessage + '\n' + instruction }
-    ]
+  const instruction =
+    'Return a valid json array, containing the number of the paragraph, the proposed rewritten text and the legalBasisReasoning for this. It could look like this [{"paragraph": 1, "rewrittenText": "This is a rewritten text", "legalBasisReasoning": "according to §1 AMG ..."}]'
+  const messages = [
+    { role: 'system', content: systemMessage },
+    { role: 'user', content: userMessage + '\n' + instruction }
+  ]
 
-    try {
-      const response = await API.openweb.createChatCompletion({
-        openwebEndpoint: settingForm.value.openwebEndpoint,
-        openwebModel: settingForm.value.openwebModelSelect,
-        collections: settingForm.value.openwebCollections
-          .split(',')
-          .map(s => s.trim())
-          .filter(Boolean),
-        messages,
-        temperature: settingForm.value.openwebTemperature,
-        openwebToken: settingForm.value.openwebToken
+  try {
+    const response = await API.openweb.createChatCompletion({
+      openwebEndpoint: settingForm.value.openwebEndpoint,
+      openwebModel: settingForm.value.openwebModelSelect,
+      collections: settingForm.value.openwebCollections
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean),
+      messages,
+      temperature: settingForm.value.openwebTemperature,
+      openwebToken: settingForm.value.openwebToken
+    })
+    result.value = response
+    const parsed = JSON.parse(response)
+    parsed
+      .sort((a: any, b: any) => a.paragraph - b.paragraph)
+      .forEach((item: any) => {
+        rewritten.push({
+          reason: item.legalBasisReasoning,
+          text: item.rewrittenText
+        })
       })
-      // Always show the raw response first in the results box
-      result.value = response
-      const parsed = JSON.parse(response)
-      rewritten.push({ reason: parsed.reason, text: parsed.text })
-    } catch (e) {
-      console.error(e)
-      errorIssue.value = true
-      loading.value = false
-      jsonOutput.value = e instanceof Error ? e.stack || String(e) : String(e)
-      ElMessage.error('AI response error')
-      return
-    }
+  } catch (e) {
+    console.error(e)
+    errorIssue.value = true
+    loading.value = false
+    jsonOutput.value = e instanceof Error ? e.stack || String(e) : String(e)
+    ElMessage.error('AI response error')
+    return
   }
 
   await API.common.rewriteSelectionParagraphs(
@@ -780,6 +841,7 @@ onBeforeMount(() => {
   loadOpenwebModels()
   loadOpenwebPrompts()
   loadOpenwebCharacters()
+  loadOpenwebCollections()
   initData()
 })
 </script>
