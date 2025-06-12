@@ -201,18 +201,12 @@ import useSettingForm from '@/utils/settingForm'
 const router = useRouter()
 const { settingForm, settingFormKeys } = useSettingForm()
 
-const ollamaModelOptions = ref<{ label: string; value: string }[]>(
-  settingPreset.ollamaModelSelect.optionList
-)
-
 const openwebModelOptions = ref<{ label: string; value: string }[]>(
   settingPreset.openwebModelSelect.optionList
 )
 
 function getSelectOptions(item: SettingNames) {
   switch (item) {
-    case 'ollamaModelSelect':
-      return ollamaModelOptions.value
     case 'openwebModelSelect':
       return openwebModelOptions.value
     default:
@@ -220,15 +214,6 @@ function getSelectOptions(item: SettingNames) {
   }
 }
 
-async function loadOllamaModels() {
-  if (!settingForm.value.ollamaEndpoint) return
-  const models = await API.ollama.listModels(settingForm.value.ollamaEndpoint)
-  const options = models.map(item => ({ label: item, value: item }))
-  if (options.length > 0) {
-    settingPreset.ollamaModelSelect.optionList = options
-    ollamaModelOptions.value = options
-  }
-}
 
 async function loadOpenwebModels() {
   if (!settingForm.value.openwebEndpoint) return
@@ -284,19 +269,11 @@ const addWatch = () => {
     )
   })
 
-  watch(
-    () => settingForm.value.ollamaEndpoint,
-    () => {
-      if (settingForm.value.api === 'ollama') {
-        loadOllamaModels()
-      }
-    }
-  )
 
   watch(
     () => settingForm.value.openwebEndpoint,
     () => {
-      if (['openweb', 'openweb-ui'].includes(settingForm.value.api)) {
+      if (settingForm.value.api === 'open-webui') {
         loadOpenwebModels()
       }
     }
@@ -305,7 +282,7 @@ const addWatch = () => {
   watch(
     () => settingForm.value.openwebToken,
     () => {
-      if (['openweb', 'openweb-ui'].includes(settingForm.value.api)) {
+      if (settingForm.value.api === 'open-webui') {
         loadOpenwebModels()
       }
     }
@@ -314,9 +291,7 @@ const addWatch = () => {
   watch(
     () => settingForm.value.api,
     val => {
-      if (val === 'ollama') {
-        loadOllamaModels()
-      } else if (val === 'openweb' || val === 'openweb-ui') {
+      if (val === 'open-webui') {
         loadOpenwebModels()
       }
     }
@@ -325,7 +300,6 @@ const addWatch = () => {
 
 onBeforeMount(() => {
   addWatch()
-  loadOllamaModels()
   loadOpenwebModels()
 })
 

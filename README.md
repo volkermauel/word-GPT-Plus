@@ -29,13 +29,8 @@ Word GPT Plus seamlessly integrates AI models into Microsoft Word, allowing you 
 
 ## ✨ Features
 
-- **Multiple AI Models Support**:
-  - OpenAI API (compatible with DeepSeek and other OpenAI-compatible endpoints)
-  - Azure OpenAI API
-  - Google Gemini Pro API
-  - Ollama (for local deployment)
-  - Groq API
-  - OpenWebUI API (supports access tokens)
+- **AI Model Support**:
+  - Open-WebUI API (supports access tokens)
 
 - **Built-in Templates**:
   - Translation (40+ languages)
@@ -65,10 +60,7 @@ Word GPT Plus seamlessly integrates AI models into Microsoft Word, allowing you 
 
 #### API Access
 
-- **OpenAI**: Obtain an API key from [OpenAI Platform](https://platform.openai.com/account/api-keys)
-- **Azure OpenAI**: Apply for access at [Azure OpenAI Service](https://go.microsoft.com/fwlink/?linkid=2222006)
-- **Google Gemini**: Request API access from [Google AI Studio](https://developers.generativeai.google/)
-- **Groq**: Get your API key from [Groq Console](https://console.groq.com/keys)
+- **Open-WebUI**: Provide your endpoint and optional access token.
 
 ## 💻 Installation
 

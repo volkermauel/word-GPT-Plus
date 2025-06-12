@@ -138,11 +138,6 @@
                 {{ $t('start') }}
               </el-button>
               <el-button
-                v-if="
-                  ['azure', 'official', 'gemini', 'ollama', 'groq'].includes(
-                    settingForm.api
-                  )
-                "
                 class="secondary-action-btn"
                 type="warning"
                 size="small"
@@ -366,24 +361,9 @@ const { t } = useI18n()
 
 const { settingForm } = useSettingForm()
 
-// dynamic ollama model list
-const ollamaModelOptions = ref<{ label: string; value: string }[]>(
-  settingPreset.ollamaModelSelect.optionList
-)
-
 const openwebModelOptions = ref<{ label: string; value: string }[]>(
   settingPreset.openwebModelSelect.optionList
 )
-
-async function loadOllamaModels() {
-  if (!settingForm.value.ollamaEndpoint) return
-  const models = await API.ollama.listModels(settingForm.value.ollamaEndpoint)
-  const options = models.map(item => ({ label: item, value: item }))
-  if (options.length > 0) {
-    settingPreset.ollamaModelSelect.optionList = options
-    ollamaModelOptions.value = options
-  }
-}
 
 async function loadOpenwebModels() {
   if (!settingForm.value.openwebEndpoint) return
@@ -437,87 +417,19 @@ const insertTypeList = ['replace', 'append', 'newLine', 'NoAction'].map(
 
 // Dynamic model selection based on current API
 const currentModelOptions = computed(() => {
-  switch (settingForm.value.api) {
-    case 'official':
-      return settingPreset.officialModelSelect.optionList
-    case 'gemini':
-      return settingPreset.geminiModelSelect.optionList
-    case 'ollama':
-      return ollamaModelOptions.value
-    case 'openweb':
-    case 'openweb-ui':
-      return openwebModelOptions.value
-    case 'groq':
-      return settingPreset.groqModelSelect.optionList
-    case 'azure':
-      return [] // Azure uses deployment name instead of model selection
-    default:
-      return []
-  }
+  return openwebModelOptions.value
 })
 
 const currentModelPlaceholder = computed(() => {
-  switch (settingForm.value.api) {
-    case 'official':
-      return t('officialModelSelectPlaceholder')
-    case 'gemini':
-      return t('geminiModelSelectPlaceholder')
-    case 'ollama':
-      return t('ollamaModelSelectPlaceholder')
-    case 'openweb':
-    case 'openweb-ui':
-      return t('openwebModelSelectPlaceholder')
-    case 'groq':
-      return t('groqModelSelectPlaceholder')
-    case 'azure':
-      return t('azureDeploymentNamePlaceholder')
-    default:
-      return 'Please select model'
-  }
+  return t('openwebModelSelectPlaceholder')
 })
 
 const currentModelSelect = computed({
   get() {
-    switch (settingForm.value.api) {
-      case 'official':
-        return settingForm.value.officialModelSelect
-      case 'gemini':
-        return settingForm.value.geminiModelSelect
-      case 'ollama':
-        return settingForm.value.ollamaModelSelect
-      case 'openweb':
-      case 'openweb-ui':
-        return settingForm.value.openwebModelSelect
-      case 'groq':
-        return settingForm.value.groqModelSelect
-      case 'azure':
-        return settingForm.value.azureDeploymentName
-      default:
-        return ''
-    }
+    return settingForm.value.openwebModelSelect
   },
   set(value) {
-    switch (settingForm.value.api) {
-      case 'official':
-        settingForm.value.officialModelSelect = value
-        break
-      case 'gemini':
-        settingForm.value.geminiModelSelect = value
-        break
-      case 'ollama':
-        settingForm.value.ollamaModelSelect = value
-        break
-      case 'openweb':
-      case 'openweb-ui':
-        settingForm.value.openwebModelSelect = value
-        break
-      case 'groq':
-        settingForm.value.groqModelSelect = value
-        break
-      case 'azure':
-        settingForm.value.azureDeploymentName = value
-        break
-    }
+    settingForm.value.openwebModelSelect = value
   }
 })
 
@@ -591,19 +503,11 @@ const addWatch = () => {
     }
   )
 
-  watch(
-    () => settingForm.value.ollamaEndpoint,
-    () => {
-      if (settingForm.value.api === 'ollama') {
-        loadOllamaModels()
-      }
-    }
-  )
 
   watch(
     () => settingForm.value.openwebEndpoint,
     () => {
-      if (['openweb', 'openweb-ui'].includes(settingForm.value.api)) {
+      if (settingForm.value.api === 'open-webui') {
         loadOpenwebModels()
       }
     }
@@ -612,7 +516,7 @@ const addWatch = () => {
   watch(
     () => settingForm.value.openwebToken,
     () => {
-      if (['openweb', 'openweb-ui'].includes(settingForm.value.api)) {
+      if (settingForm.value.api === 'open-webui') {
         loadOpenwebModels()
       }
     }
@@ -621,9 +525,7 @@ const addWatch = () => {
   watch(
     () => settingForm.value.api,
     val => {
-      if (val === 'ollama') {
-        loadOllamaModels()
-      } else if (val === 'openweb' || val === 'openweb-ui') {
+      if (val === 'open-webui') {
         loadOpenwebModels()
       }
     }
@@ -676,15 +578,8 @@ async function template(taskType: keyof typeof buildInPrompt | 'custom') {
     }))
   })
 
-  if (
-    (settingForm.value.api === 'ollama' && !settingForm.value.ollamaEndpoint) ||
-    ((settingForm.value.api === 'openweb' ||
-      settingForm.value.api === 'openweb-ui') &&
-      !settingForm.value.openwebEndpoint)
-  ) {
-    ElMessage.error(
-      'Only Ollama or OpenWebUI API is supported for paragraph rewrite.'
-    )
+  if (!settingForm.value.openwebEndpoint) {
+    ElMessage.error('Open-WebUI endpoint required for paragraph rewrite.')
     loading.value = false
     return
   }
@@ -727,29 +622,17 @@ async function template(taskType: keyof typeof buildInPrompt | 'custom') {
     ]
 
     try {
-      let response = ''
-      if (settingForm.value.api === 'ollama') {
-        response = await API.ollama.createChatCompletion({
-          ollamaEndpoint: settingForm.value.ollamaEndpoint,
-          ollamaModel:
-            settingForm.value.ollamaCustomModel ||
-            settingForm.value.ollamaModelSelect,
-          messages,
-          temperature: settingForm.value.ollamaTemperature
-        })
-      } else {
-        response = await API.openweb.createChatCompletion({
-          openwebEndpoint: settingForm.value.openwebEndpoint,
-          openwebModel: settingForm.value.openwebModelSelect,
-          collections: settingForm.value.openwebCollections
-            .split(',')
-            .map(s => s.trim())
-            .filter(Boolean),
-          messages,
-          temperature: settingForm.value.openwebTemperature,
-          openwebToken: settingForm.value.openwebToken
-        })
-      }
+      const response = await API.openweb.createChatCompletion({
+        openwebEndpoint: settingForm.value.openwebEndpoint,
+        openwebModel: settingForm.value.openwebModelSelect,
+        collections: settingForm.value.openwebCollections
+          .split(',')
+          .map(s => s.trim())
+          .filter(Boolean),
+        messages,
+        temperature: settingForm.value.openwebTemperature,
+        openwebToken: settingForm.value.openwebToken
+      })
       const parsed = JSON.parse(response)
       rewritten.push({ reason: parsed.reason, text: parsed.text })
     } catch (e) {
@@ -770,17 +653,6 @@ async function template(taskType: keyof typeof buildInPrompt | 'custom') {
 }
 
 function checkApiKey() {
-  const auth = {
-    type: settingForm.value.api,
-    apiKey: settingForm.value.officialAPIKey,
-    azureAPIKey: settingForm.value.azureAPIKey,
-    geminiAPIKey: settingForm.value.geminiAPIKey,
-    groqAPIKey: settingForm.value.groqAPIKey
-  }
-  if (!checkAuth(auth)) {
-    ElMessage.error('Set API Key or Access Token first')
-    return false
-  }
   return true
 }
 
@@ -804,144 +676,22 @@ async function continueChat() {
   if (!checkApiKey()) return
   loading.value = true
   try {
-    switch (settingForm.value.api) {
-      case 'official':
-        historyDialog.value.push({
-          role: 'user',
-          content: 'continue'
-        })
-
-        await API.official.createChatCompletionStream({
-          config: API.official.setConfig(
-            settingForm.value.officialAPIKey,
-            settingForm.value.officialBasePath
-          ),
-          messages: historyDialog.value,
-          result,
-          historyDialog,
-          errorIssue,
-          loading,
-          maxTokens: settingForm.value.officialMaxTokens,
-          temperature: settingForm.value.officialTemperature,
-          model:
-            settingForm.value.officialCustomModel ||
-            settingForm.value.officialModelSelect
-        })
-        break
-      case 'groq':
-        historyDialog.value.push({
-          role: 'user',
-          content: 'continue'
-        })
-        await API.groq.createChatCompletionStream({
-          groqAPIKey: settingForm.value.groqAPIKey,
-          groqModel:
-            settingForm.value.groqCustomModel ||
-            settingForm.value.groqModelSelect,
-          messages: historyDialog.value,
-          result,
-          historyDialog,
-          errorIssue,
-          loading,
-          maxTokens: settingForm.value.officialMaxTokens,
-          temperature: settingForm.value.officialTemperature
-        })
-        break
-      case 'azure':
-        historyDialog.value.push({
-          role: 'user',
-          content: 'continue'
-        })
-        await API.azure.createChatCompletionStream({
-          azureAPIKey: settingForm.value.azureAPIKey,
-          azureAPIEndpoint: settingForm.value.azureAPIEndpoint,
-          azureDeploymentName: settingForm.value.azureDeploymentName,
-          azureAPIVersion: settingForm.value.azureAPIVersion,
-          messages: historyDialog.value,
-          result,
-          historyDialog,
-          errorIssue,
-          loading,
-          maxTokens: settingForm.value.azureMaxTokens,
-          temperature: settingForm.value.azureTemperature
-        })
-        break
-      case 'gemini':
-        historyDialog.value.push(
-          ...[
-            {
-              role: 'user',
-              parts: [
-                {
-                  text: 'continue'
-                }
-              ]
-            },
-            {
-              role: 'model',
-              parts: [
-                {
-                  text: 'OK, I will continue to help you.'
-                }
-              ]
-            }
-          ]
-        )
-        await API.gemini.createChatCompletionStream({
-          geminiAPIKey: settingForm.value.geminiAPIKey,
-          messages: 'continue',
-          result,
-          historyDialog,
-          errorIssue,
-          loading,
-          maxTokens: settingForm.value.geminiMaxTokens,
-          temperature: settingForm.value.geminiTemperature,
-          geminiModel:
-            settingForm.value.geminiCustomModel ||
-            settingForm.value.geminiModelSelect
-        })
-        break
-      case 'ollama':
-        historyDialog.value.push({
-          role: 'user',
-          content: 'continue'
-        })
-        await API.ollama.createChatCompletionStream({
-          ollamaEndpoint: settingForm.value.ollamaEndpoint,
-          ollamaModel:
-            settingForm.value.ollamaCustomModel ||
-            settingForm.value.ollamaModelSelect,
-          messages: historyDialog.value,
-          result,
-          historyDialog,
-          errorIssue,
-          loading,
-          temperature: settingForm.value.ollamaTemperature
-        })
-        break
-      case 'openweb':
-      case 'openweb-ui':
-        historyDialog.value.push({
-          role: 'user',
-          content: 'continue'
-        })
-        await API.openweb.createChatCompletionStream({
-          openwebEndpoint: settingForm.value.openwebEndpoint,
-          openwebModel: settingForm.value.openwebModelSelect,
-          collections: settingForm.value.openwebCollections
-            .split(',')
-            .map(s => s.trim())
-            .filter(Boolean),
-          messages: historyDialog.value,
-          result,
-          historyDialog,
-          errorIssue,
-          loading,
-          temperature: settingForm.value.openwebTemperature,
-          openwebToken: settingForm.value.openwebToken
-        })
-        break
-    }
+    historyDialog.value.push({ role: 'user', content: 'continue' })
+    await API.openweb.createChatCompletionStream({
+      openwebEndpoint: settingForm.value.openwebEndpoint,
+      openwebModel: settingForm.value.openwebModelSelect,
+      collections: settingForm.value.openwebCollections
+        .split(',')
+        .map(s => s.trim())
+        .filter(Boolean),
+      messages: historyDialog.value,
+      result,
+      historyDialog,
+      errorIssue,
+      loading,
+      temperature: settingForm.value.openwebTemperature,
+      openwebToken: settingForm.value.openwebToken
+    })
   } catch (error) {
     result.value = String(error)
     errorIssue.value = true
@@ -957,7 +707,6 @@ async function continueChat() {
 
 onBeforeMount(() => {
   addWatch()
-  loadOllamaModels()
   loadOpenwebModels()
   initData()
 })

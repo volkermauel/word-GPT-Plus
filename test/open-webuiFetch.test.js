@@ -1,6 +1,6 @@
 const assert = require('node:assert/strict');
 const { test } = require('node:test');
-const { createChatCompletion } = require('../src/api/openwebui');
+const { createChatCompletion } = require('../src/api/open-webui');
 
 test('createChatCompletion sends correct request and parses result', async () => {
   let calledUrl = '';
