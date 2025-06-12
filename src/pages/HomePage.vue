@@ -687,43 +687,33 @@ async function template(taskType: keyof typeof buildInPrompt | 'custom') {
     return
   }
 
-  const rewritten: { reason: string; text: string }[] = []
-  for (const p of info) {
+  let rewritten: { reason: string; text: string }[] = []
+
+  if (taskType === 'custom') {
     let systemMessage
-    let userMessage = ''
-    const paragraphText = p.text
-
-    if (taskType === 'custom') {
-      if (systemPrompt.value.includes('{language}')) {
-        systemMessage = systemPrompt.value.replace(
-          '{language}',
-          settingForm.value.replyLanguage
-        )
-      } else {
-        systemMessage = systemPrompt.value
-      }
-      if (userMessage.includes('{text}')) {
-        userMessage = userMessage.replace('{text}', paragraphText)
-      } else {
-        userMessage = `Reply in ${settingForm.value.replyLanguage} ${prompt.value} ${paragraphText}`
-      }
+    const numbered = info
+      .map((p, idx) => `[${idx + 1}] ${p.text}`)
+      .join('\n')
+    if (systemPrompt.value.includes('{language}')) {
+      systemMessage = systemPrompt.value.replace(
+        '{language}',
+        settingForm.value.replyLanguage
+      )
     } else {
-      systemMessage = buildInPrompt[taskType].system(
-        settingForm.value.replyLanguage
-      )
-      userMessage = buildInPrompt[taskType].user(
-        paragraphText,
-        settingForm.value.replyLanguage
-      )
+      systemMessage = systemPrompt.value
     }
-
+    let userMessage
+    if (prompt.value.includes('{text}')) {
+      userMessage = prompt.value.replace('{text}', numbered)
+    } else {
+      userMessage = `Reply in ${settingForm.value.replyLanguage} ${prompt.value} ${numbered}`
+    }
     const instruction =
-      'Return a JSON object with keys "reason" and "text". "reason" briefly explains your changes. "text" is the rewritten paragraph.'
+      'Return a valid json array, containing the number of the paragraph, the proposed rewritten text and the legalBasisReasoning for this. It could look like this [{"paragraph": 1, "rewrittenText": "This is a rewritten text", "legalBasisReasoning": "according to §1 AMG ..."}]'
     const messages = [
       { role: 'system', content: systemMessage },
       { role: 'user', content: userMessage + '\n' + instruction }
     ]
-
     try {
       const response = await API.openweb.createChatCompletion({
         openwebEndpoint: settingForm.value.openwebEndpoint,
@@ -736,10 +726,17 @@ async function template(taskType: keyof typeof buildInPrompt | 'custom') {
         temperature: settingForm.value.openwebTemperature,
         openwebToken: settingForm.value.openwebToken
       })
-      // Always show the raw response first in the results box
       result.value = response
       const parsed = JSON.parse(response)
-      rewritten.push({ reason: parsed.reason, text: parsed.text })
+      if (Array.isArray(parsed)) {
+        rewritten = info.map((p, idx) => {
+          const match = parsed.find((m: any) => m.paragraph === idx + 1)
+          return {
+            reason: match?.legalBasisReasoning || '',
+            text: match?.rewrittenText || p.text
+          }
+        })
+      }
     } catch (e) {
       console.error(e)
       errorIssue.value = true
@@ -747,6 +744,51 @@ async function template(taskType: keyof typeof buildInPrompt | 'custom') {
       jsonOutput.value = e instanceof Error ? e.stack || String(e) : String(e)
       ElMessage.error('AI response error')
       return
+    }
+  } else {
+    for (const p of info) {
+      let systemMessage
+      let userMessage = ''
+      const paragraphText = p.text
+
+      systemMessage = buildInPrompt[taskType].system(
+        settingForm.value.replyLanguage
+      )
+      userMessage = buildInPrompt[taskType].user(
+        paragraphText,
+        settingForm.value.replyLanguage
+      )
+
+      const instruction =
+        'Return a JSON object with keys "reason" and "text". "reason" briefly explains your changes. "text" is the rewritten paragraph.'
+      const messages = [
+        { role: 'system', content: systemMessage },
+        { role: 'user', content: userMessage + '\n' + instruction }
+      ]
+
+      try {
+        const response = await API.openweb.createChatCompletion({
+          openwebEndpoint: settingForm.value.openwebEndpoint,
+          openwebModel: settingForm.value.openwebModelSelect,
+          collections: settingForm.value.openwebCollections
+            .split(',')
+            .map(s => s.trim())
+            .filter(Boolean),
+          messages,
+          temperature: settingForm.value.openwebTemperature,
+          openwebToken: settingForm.value.openwebToken
+        })
+        result.value = response
+        const parsed = JSON.parse(response)
+        rewritten.push({ reason: parsed.reason, text: parsed.text })
+      } catch (e) {
+        console.error(e)
+        errorIssue.value = true
+        loading.value = false
+        jsonOutput.value = e instanceof Error ? e.stack || String(e) : String(e)
+        ElMessage.error('AI response error')
+        return
+      }
     }
   }
 
