@@ -1,18 +1,24 @@
 #!/bin/bash
 set -euo pipefail
 
-# Install Node.js 20 if not installed or version <18
-NODE_MAJOR_REQUIRED=18
+# Install Node.js 20 if the current version is outside the 18-20 range
+MIN_NODE=18
+MAX_NODE=20
 
 if ! command -v node >/dev/null 2>&1; then
   curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
   apt-get install -y nodejs
 else
   INSTALLED_MAJOR=$(node -v | cut -d. -f1 | tr -d 'v')
-  if [ "$INSTALLED_MAJOR" -lt "$NODE_MAJOR_REQUIRED" ]; then
+  if [ "$INSTALLED_MAJOR" -lt "$MIN_NODE" ] || [ "$INSTALLED_MAJOR" -gt "$MAX_NODE" ]; then
     curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
     apt-get install -y nodejs
   fi
+fi
+
+# Ensure nvm-installed Node versions don't override the system node
+if command -v nvm >/dev/null 2>&1; then
+  nvm deactivate
 fi
 
 # Install build dependencies required for node-gyp
