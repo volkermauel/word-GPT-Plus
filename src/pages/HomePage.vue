@@ -634,6 +634,8 @@ async function template(taskType: keyof typeof buildInPrompt | 'custom') {
         temperature: settingForm.value.openwebTemperature,
         openwebToken: settingForm.value.openwebToken
       })
+      // Always show the raw response first in the results box
+      result.value = response
       const parsed = JSON.parse(response)
       rewritten.push({ reason: parsed.reason, text: parsed.text })
     } catch (e) {
