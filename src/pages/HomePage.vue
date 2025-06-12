@@ -289,14 +289,23 @@
             <div class="section-header">
               <label class="section-label">{{ $t('openwebCollectionsLabel') }}</label>
             </div>
-            <el-checkbox-group v-model="openwebCollectionSelected">
-              <el-checkbox
+            <el-select
+              v-model="openwebCollectionSelected"
+              class="config-select"
+              multiple
+              filterable
+              collapse-tags
+              collapse-tags-tooltip
+              size="small"
+              :placeholder="$t('openwebCollectionsPlaceholder')"
+            >
+              <el-option
                 v-for="item in openwebCollectionOptions"
                 :key="item.value"
-                :label="item.value"
-                >{{ item.label }}</el-checkbox
-              >
-            </el-checkbox-group>
+                :label="item.label"
+                :value="item.value"
+              />
+            </el-select>
           </div>
         </el-card>
 
