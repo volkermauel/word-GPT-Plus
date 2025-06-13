@@ -208,7 +208,7 @@
               @change="handleSystemPromptChange"
             >
               <el-option
-                v-for="item in systemPromptList"
+                v-for="item in allSystemPromptOptions"
                 :key="item.value"
                 :label="item.key"
                 :value="item.value"
@@ -491,6 +491,11 @@ const allPromptOptions = computed(() => [
   ...openwebCharacterList.value
 ])
 
+const allSystemPromptOptions = computed(() => [
+  ...systemPromptList.value,
+  ...openwebCharacterList.value
+])
+
 // result
 const result = ref('res')
 const loading = ref(false)
@@ -651,13 +656,17 @@ async function initData() {
     localStorage.getItem(localStorageKey.defaultSystemPrompt) ||
     'Act like a personal assistant.'
   await getSystemPromptList()
-  if (systemPromptList.value.find(item => item.value === systemPrompt.value)) {
+  await loadOpenwebCharacters()
+  if (
+    [...systemPromptList.value, ...openwebCharacterList.value].find(
+      item => item.value === systemPrompt.value
+    )
+  ) {
     systemPromptSelected.value = systemPrompt.value
   }
   prompt.value = localStorage.getItem(localStorageKey.defaultPrompt) || ''
   await getPromptList()
   await loadOpenwebPrompts()
-  await loadOpenwebCharacters()
   await loadOpenwebCollections()
   if (
     [
