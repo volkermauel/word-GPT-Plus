@@ -228,25 +228,28 @@ async function loadOpenwebModels() {
 }
 
 const getApiInputSettings = (platform: string) => {
+  const prefix = platform.replace(/-/g, '')
   return Object.keys(settingForm.value).filter(
     key =>
-      key.startsWith(platform) &&
+      (key.startsWith(platform) || key.startsWith(prefix)) &&
       settingPreset[key as SettingNames].type === 'input'
   )
 }
 
 const getApiNumSettings = (platform: string) => {
+  const prefix = platform.replace(/-/g, '')
   return Object.keys(settingForm.value).filter(
     key =>
-      key.startsWith(platform) &&
+      (key.startsWith(platform) || key.startsWith(prefix)) &&
       settingPreset[key as SettingNames].type === 'inputNum'
   )
 }
 
 const getApiSelectSettings = (platform: string) => {
+  const prefix = platform.replace(/-/g, '')
   return Object.keys(settingForm.value).filter(
     key =>
-      key.startsWith(platform) &&
+      (key.startsWith(platform) || key.startsWith(prefix)) &&
       settingPreset[key as SettingNames].type === 'select'
   )
 }
