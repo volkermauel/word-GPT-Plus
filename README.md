@@ -14,11 +14,14 @@
   </p>
 </div>
 
-English | [简体中文](https://github.com/Kuingsmile/word-GPT-Plus/blob/master/README_cn.md)
+English |
+[Simplified Chinese](https://github.com/Kuingsmile/word-GPT-Plus/blob/master/README_cn.md)
 
 ## 📋 Introduction
 
-Word GPT Plus seamlessly integrates AI models into Microsoft Word, allowing you to generate, translate, summarize, and polish text directly within your documents. Enhance your writing workflow without leaving your Word environment.
+Word GPT Plus seamlessly integrates AI models into Microsoft Word, allowing you
+to generate, translate, summarize, and polish text directly within your
+documents. Enhance your writing workflow without leaving your Word environment.
 
 ![Image](https://github.com/user-attachments/assets/5288d7a1-0859-4e2f-9f36-c98a12f898fa)
 
@@ -30,9 +33,11 @@ Word GPT Plus seamlessly integrates AI models into Microsoft Word, allowing you 
 ## ✨ Features
 
 - **AI Model Support**:
+
   - Open-WebUI API (supports access tokens)
 
 - **Built-in Templates**:
+
   - Translation (40+ languages)
   - Text polishing and improvement
   - Academic writing enhancement
@@ -68,11 +73,14 @@ Choose one of the following installation methods:
 
 ### Option 1: Use Hosted Service (Recommended)
 
-1. Download [manifest.xml](https://github.com/Kuingsmile/word-GPT-Plus/blob/master/release/instant-use/manifest.xml)
-2. Save it to a directory on your computer (e.g., `C:\Users\username\Documents\WordGPT`)
+1. Download
+   [manifest.xml](https://github.com/Kuingsmile/word-GPT-Plus/blob/master/release/instant-use/manifest.xml)
+2. Save it to a directory on your computer (e.g.,
+   `C:\Users\username\Documents\WordGPT`)
 3. Follow the [Add-in Installation Guide](#add-in-installation-guide) below
 
-> **Note for users in China**: If you experience connectivity issues, try adding `msq.pub` to your proxy rules or use the self-hosted option.
+> **Note for users in China**: If you experience connectivity issues, try adding
+> `msq.pub` to your proxy rules or use the self-hosted option.
 
 ### Option 2: Docker Deployment
 
@@ -81,13 +89,15 @@ docker pull kuingsmile/word-gpt-plus
 docker run -d -p 3000:80 kuingsmile/word-gpt-plus
 ```
 
-You need to modify all `[localhost:3000](http://localhost:3000)` in manifest.xml to your server address.
+You need to modify all `[localhost:3000](http://localhost:3000)` in manifest.xml
+to your server address.
 
 Follow the [Add-in Installation Guide](#add-in-installation-guide) below.
 
 ### Option 3: Self-hosted
 
-If you want to host the add-in yourself, you will need to clone this repo and install dependencies, then run the project. Need Node.js 18+.
+If you want to host the add-in yourself, you will need to clone this repo and
+install dependencies, then run the project. Need Node.js 18+.
 
 ```bash
 git clone https://github.com/Kuingsmile/Word-GPT-Plus.git
@@ -101,34 +111,48 @@ Then, follow the [Add-in Installation Guide](#add-in-installation-guide) below.
 
 ### Add-in Installation Guide
 
-To get started with Word GPT Plus, you will need to sideload the add-in into Microsoft Word.
+To get started with Word GPT Plus, you will need to sideload the add-in into
+Microsoft Word.
 
-You can find instructions provided by MicroSoft at the following link: [sideload office add-ins](https://learn.microsoft.com/en-us/office/dev/add-ins/testing/create-a-network-shared-folder-catalog-for-task-pane-and-content-add-ins)
+You can find instructions provided by MicroSoft at the following link:
+[sideload office add-ins](https://learn.microsoft.com/en-us/office/dev/add-ins/testing/create-a-network-shared-folder-catalog-for-task-pane-and-content-add-ins)
 
-1. Go to the folder where you saved the `manifest.xml` file, for example `C:\Users\username\Documents\WordGPT`.
-2. Open the context menu for the folder(right-click the folder) and select **Properties**.
-3. Within the **Properties** dialog box, select the **Sharing** tab, and then select **Share**.
-![image](https://learn.microsoft.com/en-us/office/dev/add-ins/images/sideload-windows-properties-dialog.png)
-4. Within the **Network access** dialog box, add yourself and any other users you want to share, choose the **Share** button, When you see confirmation that Your folder is shared, note the **full network path** that's displayed immediately following the folder name.
-![image](https://learn.microsoft.com/en-us/office/dev/add-ins/images/sideload-windows-network-access-dialog.png)
-5. Open a new document in Word, choose the **File** tab, and then choose **Options**.
-6. Choose **Trust Center**, and then choose the **Trust Center Settings** button.
+1. Go to the folder where you saved the `manifest.xml` file, for example
+   `C:\Users\username\Documents\WordGPT`.
+2. Open the context menu for the folder(right-click the folder) and select
+   **Properties**.
+3. Within the **Properties** dialog box, select the **Sharing** tab, and then
+   select **Share**.
+   ![image](https://learn.microsoft.com/en-us/office/dev/add-ins/images/sideload-windows-properties-dialog.png)
+4. Within the **Network access** dialog box, add yourself and any other users
+   you want to share, choose the **Share** button, When you see confirmation
+   that Your folder is shared, note the **full network path** that's displayed
+   immediately following the folder name.
+   ![image](https://learn.microsoft.com/en-us/office/dev/add-ins/images/sideload-windows-network-access-dialog.png)
+5. Open a new document in Word, choose the **File** tab, and then choose
+   **Options**.
+6. Choose **Trust Center**, and then choose the **Trust Center Settings**
+   button.
 7. Choose **Trusted Add-in Catalogs**.
-8. In the **Catalog Url** box, enter the **full network path** and then choose **Add Catalog**.
+8. In the **Catalog Url** box, enter the **full network path** and then choose
+   **Add Catalog**.
 9. Select the **Show in Menu** check box, and then choose **OK**.
-![image](https://learn.microsoft.com/en-us/office/dev/add-ins/images/sideload-windows-trust-center-dialog.png)
+   ![image](https://learn.microsoft.com/en-us/office/dev/add-ins/images/sideload-windows-trust-center-dialog.png)
 10. Close and then restart Word.
-11. Click **Insert** > **My Add-ins** > **Shared Folder**, choose **GPT Plus**, and then choose **Add**.
+11. Click **Insert** > **My Add-ins** > **Shared Folder**, choose **GPT Plus**,
+    and then choose **Add**.
 12. Enjoy it!
-![image](https://user-images.githubusercontent.com/96409857/234744280-9d9f13cf-536b-4fb5-adfa-cbec262d56a2.png)
+    ![image](https://user-images.githubusercontent.com/96409857/234744280-9d9f13cf-536b-4fb5-adfa-cbec262d56a2.png)
 
 ## How to fill in API key
 
-After entering Word GPT Plus, click the orange `Settings` button on the homepage to enter the settings page, where you can switch APIs and fill in API keys.
+After entering Word GPT Plus, click the orange `Settings` button on the homepage
+to enter the settings page, where you can switch APIs and fill in API keys.
 
 ## Contributing
 
-If you have a suggestion that would make this better, please fork the repo and create a pull request.
+If you have a suggestion that would make this better, please fork the repo and
+create a pull request.
 
 ## License
 

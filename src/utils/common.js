@@ -1,15 +1,15 @@
 function checkAuth(auth) {
-  if (!auth) return false;
+  if (!auth) return false
   switch (auth.type) {
     case 'open-webui':
-      return true;
+      return true
     default:
-      return false;
+      return false
   }
 }
 
 function forceNumber(val) {
-  return Number(val) || 0;
+  return Number(val) || 0
 }
 
 function getOptionList(map, from = 'key', isUseValueAsLabel = false) {
@@ -21,19 +21,19 @@ function getOptionList(map, from = 'key', isUseValueAsLabel = false) {
     : Object.values(map).map(key => ({
         label: key,
         value: key
-      }));
+      }))
 }
 
 const localLanguageList = [
   { label: 'English', value: 'en' },
-  { label: '简体中文', value: 'zh-cn' }
-];
+  { label: 'Simplified Chinese', value: 'zh-cn' }
+]
 
 // optionLists from the original TypeScript module are omitted here since the
 // tests only rely on the helper functions themselves.
 
-const getLabel = key => `${key}Label`;
-const getPlaceholder = key => `${key}Placeholder`;
+const getLabel = key => `${key}Label`
+const getPlaceholder = key => `${key}Placeholder`
 
 module.exports = {
   checkAuth,
@@ -41,4 +41,4 @@ module.exports = {
   getOptionList,
   getLabel,
   getPlaceholder
-};
+}
