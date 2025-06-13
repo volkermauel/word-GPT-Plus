@@ -197,6 +197,11 @@ import { availableAPIs } from '@/utils/constant'
 import API from '@/api'
 import { SettingNames, settingPreset } from '@/utils/settingPreset'
 import useSettingForm from '@/utils/settingForm'
+import {
+  getApiInputSettings,
+  getApiNumSettings,
+  getApiSelectSettings
+} from '@/utils/settingHelpers'
 
 const router = useRouter()
 const { settingForm, settingFormKeys } = useSettingForm()
@@ -225,33 +230,6 @@ async function loadOpenwebModels() {
     settingPreset.openwebModelSelect.optionList = options
     openwebModelOptions.value = options
   }
-}
-
-const getApiInputSettings = (platform: string) => {
-  const prefix = platform.replace(/-/g, '')
-  return Object.keys(settingForm.value).filter(
-    key =>
-      (key.startsWith(platform) || key.startsWith(prefix)) &&
-      settingPreset[key as SettingNames].type === 'input'
-  )
-}
-
-const getApiNumSettings = (platform: string) => {
-  const prefix = platform.replace(/-/g, '')
-  return Object.keys(settingForm.value).filter(
-    key =>
-      (key.startsWith(platform) || key.startsWith(prefix)) &&
-      settingPreset[key as SettingNames].type === 'inputNum'
-  )
-}
-
-const getApiSelectSettings = (platform: string) => {
-  const prefix = platform.replace(/-/g, '')
-  return Object.keys(settingForm.value).filter(
-    key =>
-      (key.startsWith(platform) || key.startsWith(prefix)) &&
-      settingPreset[key as SettingNames].type === 'select'
-  )
 }
 
 const addWatch = () => {
