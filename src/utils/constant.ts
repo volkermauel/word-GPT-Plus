@@ -7,9 +7,9 @@ export const languageMap: IStringKeyMap = {
   pt: 'Português',
   hi: 'हिन्दी',
   ar: 'العربية',
-  'zh-cn': '简体中文',
-  'zh-tw': '繁體中文',
-  ja: '日本語',
+  'zh-cn': 'Simplified Chinese',
+  'zh-tw': 'Traditional Chinese',
+  ja: 'Japanese',
   ko: '한국어',
   ru: 'Русский',
   nl: 'Nederlands',
@@ -47,7 +47,7 @@ export const availableAPIs: IStringKeyMap = {
   'open-webui': 'open-webui'
 }
 
-// official API 可用的模型
+// available models for the official API
 export const availableModelsForOpenweb: IStringKeyMap = {}
 
 export const buildInPrompt = {

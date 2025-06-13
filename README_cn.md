@@ -5,88 +5,99 @@
 
   <h2 align="center">Word GPT Plus</h2>
   <p align="center">
-    将 AI 直接集成到 Microsoft Word
+    Integrate AI directly into Microsoft Word
     <br />
-    <a href="#功能特点">功能特点</a> •
-    <a href="#开始使用">开始使用</a> •
-    <a href="#安装说明">安装说明</a> •
-    <a href="#使用方法">使用方法</a>
+    <a href="#features">Features</a> •
+    <a href="#getting-started">Getting Started</a> •
+    <a href="#installation">Installation</a> •
+    <a href="#usage">Usage</a>
   </p>
 </div>
 
-简体中文 | [English](https://github.com/Kuingsmile/word-GPT-Plus/blob/master/README.md)
+English |
+[Simplified Chinese](https://github.com/Kuingsmile/word-GPT-Plus/blob/master/README_cn.md)
 
-## 📋 简介
+## 📋 Introduction
 
-Word GPT Plus 是一款将 AI 模型无缝集成到 Microsoft Word 中的插件，使您能够在文档中直接生成、翻译、总结和润色文本。增强您的写作流程，无需离开 Word 环境。
+Word GPT Plus seamlessly integrates AI models into Microsoft Word, allowing you
+to generate, translate, summarize, and polish text directly within your
+documents. Enhance your writing workflow without leaving your Word environment.
 
 ![Image](https://github.com/user-attachments/assets/5288d7a1-0859-4e2f-9f36-c98a12f898fa)
 
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/96409857/233878627-6b5abdfd-7ff6-4818-8b26-d78f74ea0e85.gif" width="45%" alt="Word GPT Plus 演示" />
-  <img src="https://user-images.githubusercontent.com/96409857/233878368-3a793d8b-3740-4471-822b-0e062415b704.gif" width="45%" alt="Word GPT Plus 演示" />
+  <img src="https://user-images.githubusercontent.com/96409857/233878627-6b5abdfd-7ff6-4818-8b26-d78f74ea0e85.gif" width="45%" alt="Word GPT Plus Demo" />
+  <img src="https://user-images.githubusercontent.com/96409857/233878368-3a793d8b-3740-4471-822b-0e062415b704.gif" width="45%" alt="Word GPT Plus Demo" />
 </p>
 
-## ✨ 功能特点
+## ✨ Features
 
-- **多种 AI 模型支持**：
-  - OpenAI API（兼容 DeepSeek 和其他 OpenAI 兼容接口）
-  - Azure OpenAI API
-  - Google Gemini Pro API
-  - Ollama（用于本地部署）
-  - Groq API
-  - OpenWebUI API（支持访问令牌）
+- **AI Model Support**:
 
-- **内置模板**：
-  - 翻译（支持 40+ 种语言）
-  - 文本润色和改进
-  - 学术写作增强
-  - 内容摘要生成
-  - 语法检查
-  - 文稿审阅
+  - Open-WebUI API (supports access tokens)
 
-- **自定义选项**：
-  - 保存自定义提示以便重复使用
-  - 调整温度和最大令牌数
-  - 支持代理设置
-  - 本地存储保护隐私
+- **Built-in Templates**:
 
-## 🚀 开始使用
+  - Translation (40+ languages)
+  - Text polishing and improvement
+  - Academic writing enhancement
+  - Content summarization
+  - Grammar checking
+  - Content review
 
-### 环境要求
+- **Customization Options**:
+  - Save custom prompts for repeated use
+  - Adjust temperature and max tokens
+  - Support for proxies
+  - Local storage for privacy
 
-#### 软件
+## 🚀 Getting Started
 
-- Microsoft Word 2016/2019 零售版、Word 2021 或 Microsoft 365
-- [Edge WebView2 运行时](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)
-- Node.js 18+（仅用于自托管）
+### Requirements
 
-> **注意**：仅适用于 .docx 文件（不兼容旧版 .doc 格式）
+#### Software
 
-#### API 访问
+- Microsoft Word 2016/2019 (retail version), Word 2021, or Microsoft 365
+- [Edge WebView2 Runtime](https://developer.microsoft.com/en-us/microsoft-edge/webview2/)
+- Node.js 18+ (only for self-hosting)
 
-- **OpenAI**：从 [OpenAI Platform](https://platform.openai.com/account/api-keys) 获取 API 密钥
-- **Azure OpenAI**：在 [Azure OpenAI Service](https://go.microsoft.com/fwlink/?linkid=2222006) 申请访问权限
-- **Google Gemini**：从 [Google AI Studio](https://developers.generativeai.google/) 请求 API 访问
-- **Groq**：从 [Groq Console](https://console.groq.com/keys) 获取 API 密钥
+> **Note**: Works only with .docx files (not compatible with older .doc format)
 
-## 💻 安装说明
+#### API Access
 
-选择以下安装方法之一：
+- **Open-WebUI**: Provide your endpoint and optional access token.
 
-### 方案一：使用托管服务（推荐）
+## 💻 Installation
 
-1. 下载 [manifest.xml](https://github.com/Kuingsmile/word-GPT-Plus/blob/master/release/instant-use/manifest.xml)
-2. 保存到您计算机上的目录（例如：`C:\Users\用户名\Documents\WordGPT`）
-3. 按照下方[旁加载插件](#旁加载插件)操作
+Choose one of the following installation methods:
 
-> **中国用户注意**：如果遇到连接问题，请尝试将 `msq.pub` 添加到您的代理规则，或使用自托管选项。
+### Option 1: Use Hosted Service (Recommended)
 
-### 方案二：Docker 部署
+1. Download
+   [manifest.xml](https://github.com/Kuingsmile/word-GPT-Plus/blob/master/release/instant-use/manifest.xml)
+2. Save it to a directory on your computer (e.g.,
+   `C:\Users\username\Documents\WordGPT`)
+3. Follow the [Add-in Installation Guide](#add-in-installation-guide) below
 
-#### 本地运行
+> **Note for users in China**: If you experience connectivity issues, try adding
+> `msq.pub` to your proxy rules or use the self-hosted option.
 
-如果你想要自己搭建服务，你需要克隆这个仓库并安装依赖项，然后运行项目。需要 Node.js 18+。
+### Option 2: Docker Deployment
+
+```bash
+docker pull kuingsmile/word-gpt-plus
+docker run -d -p 3000:80 kuingsmile/word-gpt-plus
+```
+
+You need to modify all `[localhost:3000](http://localhost:3000)` in manifest.xml
+to your server address.
+
+Follow the [Add-in Installation Guide](#add-in-installation-guide) below.
+
+### Option 3: Self-hosted
+
+If you want to host the add-in yourself, you will need to clone this repo and
+install dependencies, then run the project. Need Node.js 18+.
 
 ```bash
 git clone https://github.com/Kuingsmile/Word-GPT-Plus.git
@@ -96,54 +107,57 @@ yarn run serve
 
 [manifest.xml](https://github.com/Kuingsmile/word-GPT-Plus/blob/master/release/self-hosted/manifest.xml)
 
-#### docker运行
+Then, follow the [Add-in Installation Guide](#add-in-installation-guide) below.
 
-你也可以使用docker运行服务，首先docker pull镜像，然后运行容器。
+### Add-in Installation Guide
 
-```bash
-docker pull kuingsmile/word-gpt-plus
-docker run -d -p 3000:80 kuingsmile/word-gpt-plus
-```
+To get started with Word GPT Plus, you will need to sideload the add-in into
+Microsoft Word.
 
-manifest.xml需要修改所有的`[localhost:3000](http://localhost:3000)`为你的服务器地址。
+You can find instructions provided by MicroSoft at the following link:
+[sideload office add-ins](https://learn.microsoft.com/en-us/office/dev/add-ins/testing/create-a-network-shared-folder-catalog-for-task-pane-and-content-add-ins)
 
-然后，按照下面的 [旁加载插件](#旁加载插件) 说明安装插件。
+1. Go to the folder where you saved the `manifest.xml` file, for example
+   `C:\Users\username\Documents\WordGPT`.
+2. Open the context menu for the folder(right-click the folder) and select
+   **Properties**.
+3. Within the **Properties** dialog box, select the **Sharing** tab, and then
+   select **Share**.
+   ![image](https://learn.microsoft.com/en-us/office/dev/add-ins/images/sideload-windows-properties-dialog.png)
+4. Within the **Network access** dialog box, add yourself and any other users
+   you want to share, choose the **Share** button, When you see confirmation
+   that Your folder is shared, note the **full network path** that's displayed
+   immediately following the folder name.
+   ![image](https://learn.microsoft.com/en-us/office/dev/add-ins/images/sideload-windows-network-access-dialog.png)
+5. Open a new document in Word, choose the **File** tab, and then choose
+   **Options**.
+6. Choose **Trust Center**, and then choose the **Trust Center Settings**
+   button.
+7. Choose **Trusted Add-in Catalogs**.
+8. In the **Catalog Url** box, enter the **full network path** and then choose
+   **Add Catalog**.
+9. Select the **Show in Menu** check box, and then choose **OK**.
+   ![image](https://learn.microsoft.com/en-us/office/dev/add-ins/images/sideload-windows-trust-center-dialog.png)
+10. Close and then restart Word.
+11. Click **Insert** > **My Add-ins** > **Shared Folder**, choose **GPT Plus**,
+    and then choose **Add**.
+12. Enjoy it!
+    ![image](https://user-images.githubusercontent.com/96409857/234744280-9d9f13cf-536b-4fb5-adfa-cbec262d56a2.png)
 
-### 旁加载插件
+## How to fill in API key
 
-为了开始使用 Word GPT Plus，你需要将插件旁加载到 Microsoft Word 中。
+After entering Word GPT Plus, click the orange `Settings` button on the homepage
+to enter the settings page, where you can switch APIs and fill in API keys.
 
-你可以在下面的链接中找到微软提供的说明：[sideload office add-ins](https://learn.microsoft.com/en-us/office/dev/add-ins/testing/create-a-network-shared-folder-catalog-for-task-pane-and-content-add-ins)
+## Contributing
 
-1. 打开你保存了 `manifest.xml` 文件的文件夹，例如 `C:\Users\username\Documents\WordGPT`.
-2. 右键点击文件夹打开菜单，选择 **属性**.
-3. 在 **属性** 对话框中，选择 **共享** 选项卡，然后选择 **共享**.
-![image](https://learn.microsoft.com/en-us/office/dev/add-ins/images/sideload-windows-properties-dialog.png)
-4. 在 **网络访问** 对话框中，添加你自己和任何你想要共享的其他用户，选择 **共享** 按钮，当你看到你的文件夹被共享的确认信息时，注意显示在文件夹名称后面的 **完整网络路径**.
-![image](https://learn.microsoft.com/en-us/office/dev/add-ins/images/sideload-windows-network-access-dialog.png)
-5. 在 Word 中打开一个新文档，选择 **文件** 选项卡，然后选择 **选项**.
-6. 选择 **信任中心**，然后选择 **信任中心设置** 按钮.
-7. 选择 **信任的目录**.
-8. 在 **目录 URL** 框中，输入 **完整网络路径**，然后选择 **添加目录**.
-9. 选择 **在菜单中显示** 复选框，然后选择 **确定**.
-![image](https://learn.microsoft.com/en-us/office/dev/add-ins/images/sideload-windows-trust-center-dialog.png)
-10. 关闭并重新启动 Word.
-11. 点击**插入** -> **获取加载项** -> **共享目录**，选择 **Word GPT**.
-12. 享受 Word GPT Plus 的强大功能吧！
-![image](https://user-images.githubusercontent.com/96409857/234744280-9d9f13cf-536b-4fb5-adfa-cbec262d56a2.png)
-
-## 如何填写API key
-
-进入Word GPT Plus后，点击主页的橙色`设置`按钮，进入设置页面，即可切换API和填写API key。
-
-## 贡献
-
-如果你希望贡献代码，请 fork 这个仓库并创建一个 pull request。
+If you have a suggestion that would make this better, please fork the repo and
+create a pull request.
 
 ## License
 
 MIT License
 
-## 请给个 ⭐️ 吧
+## Show your support
 
-如果这个项目帮助到了你，请给个 ⭐️ 吧！
+Give a ⭐️ if this project helped you!
