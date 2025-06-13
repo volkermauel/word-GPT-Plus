@@ -80,6 +80,32 @@
                 </el-select>
               </div>
             </div>
+            <div v-if="settingForm.api === 'open-webui'" class="setting-row">
+              <div class="setting-group">
+                <label class="compact-label">{{
+                  $t('openwebEndpointLabel')
+                }}</label>
+                <el-input
+                  v-model="settingForm.openwebEndpoint"
+                  class="compact-select"
+                  size="small"
+                  :placeholder="$t('openwebEndpointPlaceholder')"
+                />
+              </div>
+              <div class="setting-group">
+                <label class="compact-label">{{
+                  $t('openwebTokenLabel')
+                }}</label>
+                <el-input
+                  v-model="settingForm.openwebToken"
+                  class="compact-select"
+                  size="small"
+                  type="password"
+                  show-password
+                  :placeholder="$t('openwebTokenPlaceholder')"
+                />
+              </div>
+            </div>
           </div>
         </el-card>
       </div>
