@@ -2,6 +2,7 @@ import { i18n } from '@/i18n'
 import { forceNumber, optionLists } from './common'
 import { availableModelsForOpenweb } from './constant'
 import { localStorageKey } from './enum'
+import { setCookie, getCookie } from './cookie'
 
 type componentType = 'input' | 'select' | 'inputNum'
 
@@ -94,7 +95,17 @@ export const settingPreset: Record<SettingNames, ISettingOption> = {
     type: 'select',
     optionList: optionLists.replyLanguageList
   },
-  openwebEndpoint: defaultInputSetting,
+  openwebEndpoint: {
+    ...defaultInputSetting,
+    getFunc: () =>
+      getCookie(localStorageKey.openwebEndpoint) ||
+      localStorage.getItem(localStorageKey.openwebEndpoint) ||
+      '',
+    saveFunc: (value: string) => {
+      localStorage.setItem(localStorageKey.openwebEndpoint, value)
+      setCookie(localStorageKey.openwebEndpoint, value)
+    }
+  },
   openwebModelSelect: selectSetting(
     '',
     'openwebModel',
@@ -103,5 +114,15 @@ export const settingPreset: Record<SettingNames, ISettingOption> = {
   ),
   openwebTemperature: inputNumSetting(0.7, 'openwebTemperature', 'temperature'),
   openwebCollections: defaultInputSetting,
-  openwebToken: defaultInputSetting
+  openwebToken: {
+    ...defaultInputSetting,
+    getFunc: () =>
+      getCookie(localStorageKey.openwebToken) ||
+      localStorage.getItem(localStorageKey.openwebToken) ||
+      '',
+    saveFunc: (value: string) => {
+      localStorage.setItem(localStorageKey.openwebToken, value)
+      setCookie(localStorageKey.openwebToken, value)
+    }
+  }
 }
